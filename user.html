@@ -10,7 +10,7 @@
 {
  width:40%;
  margin:0 auto;
- padding:50px;
+ padding:5px;
  background-image: url('background.png');
  background-repeat: no-repeat;
   background-size: cover;
@@ -20,7 +20,12 @@ font-size: 18px ;
 
 }
 
-}
+#map {
+    width:40%;
+        height: 600px;
+        width: 800px;
+       }
+
 </style>
 
 </head>
@@ -163,6 +168,85 @@ font-size: 18px ;
 	<button  type="submit" class="btn btn-outline-danger" >Back</button> 
 </form>
   </div>
+
+      <!--The div elements for the map and message -->
+      <div id="map"></div>
+      <div id="msg"></div>
+      <script>
+  // Initialize and add the map
+  var map;
+  function initMap() {
+          // Locations of landmarks
+    const versaillesuvsq = {lat: 48.8110442904212 , lng: 2.148593859886628};
+    const ladefense = {lat: 48.890615742072875, lng: 2.2455969901578716};
+
+    // The map, centered on Central Park
+    const center = versaillesuvsq ;
+    const options = {zoom: 11, scaleControl: true, center: center};
+    map = new google.maps.Map(
+        document.getElementById('map'), options);
+  
+
+    // The markers for The Dakota and The Frick Collection
+    var mk1 = new google.maps.Marker({position: versaillesuvsq, map: map});
+    var mk2 = new google.maps.Marker({position: ladefense, map: map});
+
+        // Draw a line showing the straight distance between the markers
+        var line = new google.maps.Polyline({path: [versaillesuvsq, ladefense], map: map});
+
+          // Calculate and display the distance between markers
+  var distance = haversine_distance(mk1, mk2);
+  document.getElementById('msg').innerHTML = "Distance between markers: " + distance.toFixed(2) + " mi.";
+  }
+
+
+
+  let directionsService = new google.maps.DirectionsService();
+  let directionsRenderer = new google.maps.DirectionsRenderer();
+  directionsRenderer.setMap(map); // Existing map object displays directions
+  // Create route from existing points used for markers
+  const route = {
+      origin: versaillesuvsq,
+      destination: ladefense,
+      travelMode: 'DRIVING'
+  }
+
+  directionsService.route(route,
+    function(response, status) { // anonymous function to capture directions
+      if (status !== 'OK') {
+        window.alert('Directions request failed due to ' + status);
+        return;
+      } else {
+        directionsRenderer.setDirections(response); // Add route to the map
+        var directionsData = response.routes[0].legs[0]; // Get data about the mapped route
+        if (!directionsData) {
+          window.alert('Directions request failed');
+          return;
+        }
+        else {
+          document.getElementById('msg').innerHTML += " Driving distance is " + directionsData.distance.text + " (" + directionsData.duration.text + ").";
+        }
+      }
+    });
+
+
+  function haversine_distance(mk1, mk2) {
+      var R = 3958.8; // Radius of the Earth in miles
+      var rlat1 = mk1.position.lat() * (Math.PI/180); // Convert degrees to radians
+      var rlat2 = mk2.position.lat() * (Math.PI/180); // Convert degrees to radians
+      var difflat = rlat2-rlat1; // Radian difference (latitudes)
+      var difflon = (mk2.position.lng()-mk1.position.lng()) * (Math.PI/180); // Radian difference (longitudes)
+
+      var d = 2 * R * Math.asin(Math.sqrt(Math.sin(difflat/2)*Math.sin(difflat/2)+Math.cos(rlat1)*Math.cos(rlat2)*Math.sin(difflon/2)*Math.sin(difflon/2)));
+      return d;
+    }
+
+      </script>
+      <!--Load the API from the specified URL -- remember to replace YOUR_API_KEY-->
+      <script async defer
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB4gjTCAbDp_zBHuX44fzpls2G8LZ-VKuw&callback=initMap">
+      </script>
+  
 
 </body>
 </html>
