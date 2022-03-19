@@ -1,0 +1,26 @@
+{
+  "name": "bloonory",
+  "version": "1.0.0",
+  "description": "Bloonory, it's a web platform de blood donation developed as a project in master1 at the uvsq, the platform connects blood donors with their donee. the platform developed by NodeJs in the backend and PostgreSQL for the database Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/flyflyinit/Bloonory.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/flyflyinit/Bloonory/issues"
+  },
+  "homepage": "https://github.com/flyflyinit/Bloonory#readme",
+  "dependencies": {
+    "ejs": "^3.1.6",
+    "express": "^4.17.3",
+    "nodemon": "^2.0.15",
+    "pg": "^8.7.3"
+  }
+}
