@@ -48,6 +48,13 @@ Pour lancer le serveur utiliser la commande:
 nodemon server.js
 ```
 
+## Commande pour télécharger toutes les librairies nécessaire pour le projet
+
+Commande à exécuter si les fichiers `package.json` et `package-lock.json` sont crées:
+```sh
+npm i
+```
+
 ## Commande utilisées pour init le projet
 
 Permet d'initialiser le projet:
