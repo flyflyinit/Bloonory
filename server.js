@@ -56,6 +56,11 @@ app.post('/admin', (req, res) => {
     console.log(req.body.password)
 })
 
+// Create an account page
+app.get('/create_account', (req, res) => {
+    res.render('pages/create_account')
+})
+
 // Other page
 app.get('/*', (req, res) => {
     res.redirect('/home')
