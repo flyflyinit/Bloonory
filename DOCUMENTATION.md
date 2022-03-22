@@ -81,3 +81,8 @@ Permet d'ajouter node-postgreSQL au projet:
 ```sh
 npm i --save pg
 ```
+
+Permet d'ajouter express-session au projet:
+```sh
+npm i --save express-session
+```
