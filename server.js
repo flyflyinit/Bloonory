@@ -1,11 +1,23 @@
 const express = require("express");
 let app = express()
 
+let session = require('express-session')
+const {request, response} = require("express")
+
 app.set('view engine', 'ejs')
+
 app.use('/public', express.static('public'))
 app.use('/script', express.static('script'))
+
 app.use(express.json())
-app.use(express.urlencoded({ extended: true }))
+app.use(express.urlencoded({ extended: false }))
+
+app.use(session({
+    secret: 'azerty',
+    resave: false,
+    saveUninitialized: true,
+    cookie: { secure: false }
+}))
 
 // Les routes
 // Homepage
@@ -63,16 +75,21 @@ app.get('/create_account', (req, res) => {
 })
 
 app.post('/create_account', (req, res) => {
-    console.log(req.body.firstName)
-    console.log(req.body.lastName)
-    console.log(req.body.email)
-    console.log(req.body.password)
-    console.log(req.body.conf_password)
-    console.log(req.body.address)
-    console.log(req.body.city)
-    console.log(req.body.phone_number)
-    console.log(req.body.gender)
-    console.log(req.body.blood_group)
+    let User = require('./models/user')
+
+    User.create(req.body.email,
+        req.body.lastName,
+        req.body.firstName,
+        req.body.blood_group,
+        req.body.gender,
+        req.body.address,
+        req.body.city,
+        req.body.phone_number,
+        req.body.password,
+        function () {
+            res.redirect('/home')
+        }
+    )
 })
 
 // Other page
