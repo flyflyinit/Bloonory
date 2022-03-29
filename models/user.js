@@ -1,4 +1,4 @@
-let client = require('../config/database')
+let client = require('../config/database_client')
 
 class User {
     constructor(row) {
@@ -41,19 +41,19 @@ class User {
         return this.row.password_user
     }
 
-    static create(mail_user, nom, prenom, groupe_sanguin, genre, adresse, ville, telephone, password_user, cb) {
+    static create(mail_user, nom, prenom, groupe_sanguin, genre, adresse, ville, telephone, password_user) {
         const sql = 'INSERT INTO utilisateur(mail_user, nom, prenom, groupe_sanguin, genre, adresse, ville, telephone, password_user) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *'
 
-        client.query(sql, [mail_user, nom, prenom, groupe_sanguin, genre, adresse, ville, telephone, password_user])
-            .then(result => cb(result))
+        return client.query(sql, [mail_user, nom, prenom, groupe_sanguin, genre, adresse, ville, telephone, password_user])
+            .then(result => result)
             .catch(e => console.error(e.stack))
     }
 
-    static find (mail_user, cb) {
+    static find(mail_user) {
         const sql = 'SELECT * FROM utilisateur WHERE mail_user = $1'
 
-        client.query(sql, [mail_user])
-            .then(result => cb(new User(result.rows[0])))
+        return client.query(sql, [mail_user])
+            .then(result => result.rows[0])
             .catch(e => console.error(e.stack))
     }
 }
