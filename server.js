@@ -1,8 +1,10 @@
-const express = require("express");
-let app = express()
+require('dotenv').config()
 
-let session = require('express-session')
-const {request, response} = require("express")
+const express = require("express")
+const bcrypt = require("bcryptjs")
+const session = require('express-session')
+
+let app = express()
 
 app.set('view engine', 'ejs')
 
@@ -10,14 +12,22 @@ app.use('/public', express.static('public'))
 app.use('/script', express.static('script'))
 
 app.use(express.json())
-app.use(express.urlencoded({ extended: false }))
+app.use(express.urlencoded({ extended: true }))
+
+const pgSession = require('connect-pg-simple')(session)
+
+let pgPool = require('./config/database_pool')
 
 app.use(session({
-    secret: 'azerty',
-    resave: false,
+    store: new pgSession({
+        pool : pgPool,
+        tableName : 'session'
+    }),
+    secret: process.env.SESSION_SECRET,
+    resave: true,
     saveUninitialized: true,
-    cookie: { secure: false }
-}))
+    cookie: { maxAge: 30 * 24 * 60 * 60 * 1000 }
+}));
 
 // Les routes
 // Homepage
@@ -54,9 +64,26 @@ app.get('/login', (req, res) => {
     res.render('pages/login')
 })
 
-app.post('/login', (req, res) => {
-    console.log(req.body.email)
-    console.log(req.body.password)
+app.post('/login', async (req, res) => {
+    const {email, password} = req.body
+    const User = require('./models/user')
+
+    const data = await User.find(email)
+    console.log(req.session.user)
+    if (data && (bcrypt.compareSync(password, data.password_user))) {
+        req.session.user = {
+            nom: data.nom,
+            prenom: data.prenom,
+            mail_user: data.mail_user,
+        }
+
+        res.redirect('/home')
+    }
+
+    else {
+        req.session.destroy((err) => { })
+        res.redirect('/login')
+    }
 })
 
 // Administration page
@@ -74,22 +101,28 @@ app.get('/create_account', (req, res) => {
     res.render('pages/create_account')
 })
 
-app.post('/create_account', (req, res) => {
+app.post('/create_account', async (req, res) => {
     let User = require('./models/user')
 
-    User.create(req.body.email,
-        req.body.lastName,
-        req.body.firstName,
-        req.body.blood_group,
-        req.body.gender,
-        req.body.address,
-        req.body.city,
-        req.body.phone_number,
-        req.body.password,
-        function () {
-            res.redirect('/home')
+    const { firstName, lastName, email, password, conf_password, address, city, phone_number, gender, blood_group } = req.body
+
+    if (password !== conf_password) {
+        console.log("ERREUR ajouter des warnings")
+    }
+    
+    // Ajouter toutes les conditions nécessaire avant de créer un utilisateur.
+    const encryptedPassword = await bcrypt.hash(password, 10)
+
+    const user = User.create(email, lastName, firstName, blood_group, gender, address, city, phone_number, encryptedPassword)
+    if (user) {
+        req.session.user = {
+            nom: lastName,
+            prenom: firstName,
+            mail_user: email,
         }
-    )
+
+        res.redirect('/home')
+    }
 })
 
 // Other page
