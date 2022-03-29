@@ -6,7 +6,7 @@
 Bloonory/
 │
 ├── config/
-│   └── database.js
+│   └── database_client.js
 │
 ├── package.json
 ├── package-lock.json
@@ -86,3 +86,19 @@ Permet d'ajouter express-session au projet:
 ```sh
 npm i --save express-session
 ```
+
+Permet d'ajouter dotenv au projet:
+```sh
+npm i --save dotenv
+```
+
+Permet d'ajouter bcryptjs au projet:
+```sh
+npm i --save bcryptjs
+```
+
+Permet d'ajouter connect-pg-simple au projet:
+```sh
+npm i --save connect-pg-simple
+```
+
