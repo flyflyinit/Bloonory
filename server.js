@@ -17,6 +17,7 @@ app.use(express.urlencoded({ extended: true }))
 const pgSession = require('connect-pg-simple')(session)
 
 let pgPool = require('./config/database_pool')
+const User = require("./models/user");
 
 app.use(session({
     store: new pgSession({
@@ -37,6 +38,22 @@ app.get('/', (req, res) => {
 
 app.get('/home', (req, res) => {
     res.render('pages/index')
+})
+
+// Method post pour la redirection des boutons donator et beneficiary
+app.post('/home',  (req, res) => {
+    if (req.session.user === undefined) {
+        res.redirect('login')
+    }
+
+    else {
+        if (req.body.hasOwnProperty("donator")) {
+            res.redirect('/donator')
+        }
+        if (req.body.hasOwnProperty("beneficiary")) {
+            res.redirect('/beneficiary')
+        }
+    }
 })
 
 // Comments
@@ -69,7 +86,6 @@ app.post('/login', async (req, res) => {
     const User = require('./models/user')
 
     const data = await User.find(email)
-    console.log(req.session.user)
     if (data && (bcrypt.compareSync(password, data.password_user))) {
         req.session.user = {
             nom: data.nom,
@@ -123,6 +139,16 @@ app.post('/create_account', async (req, res) => {
 
         res.redirect('/home')
     }
+})
+
+// Create a donator page
+app.get('/donator', (req, res) => {
+    res.render('pages/donator')
+})
+
+// Create a beneficiary page
+app.get('/beneficiary', (req, res) => {
+    res.render('pages/beneficiary')
 })
 
 // Other page
