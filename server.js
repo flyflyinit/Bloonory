@@ -18,6 +18,7 @@ const pgSession = require('connect-pg-simple')(session)
 
 let pgPool = require('./config/database_pool')
 const User = require("./models/user");
+const Comments = require("./models/comments");
 
 app.use(session({
     store: new pgSession({
@@ -104,11 +105,11 @@ app.post('/login', async (req, res) => {
     const User = require('./models/user')
 
     const data = await User.find(email)
-    if (data && (bcrypt.compareSync(password, data.password_user))) {
+    if (data.row && (bcrypt.compareSync(password, data.password))) {
         req.session.user = {
-            nom: data.nom,
-            prenom: data.prenom,
-            mail_user: data.mail_user,
+            nom: data.last_name,
+            prenom: data.first_name,
+            mail_user: data.mail,
         }
 
         res.redirect('/home')
