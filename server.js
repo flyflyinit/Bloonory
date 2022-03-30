@@ -57,8 +57,26 @@ app.post('/home',  (req, res) => {
 })
 
 // Comments
-app.get('/comments', (req, res) => {
-    res.render('pages/comments')
+app.get('/comments', async (req, res) => {
+    const Comments = require('./models/comments')
+    const data = await Comments.find_all_and_info_user()
+
+    let connexion = false
+
+    if (req.session.user !== undefined) {
+        connexion = true
+    }
+
+    res.render('pages/comments', {comments: data, connexion: connexion})
+})
+
+app.post('/comments', async (req, res) => {
+    const { comment } = req.body
+    const Comments = require('./models/comments')
+
+    const data = await Comments.create(comment, req.session.user.mail_user)
+
+    res.redirect('/comments')
 })
 
 // Partners page
