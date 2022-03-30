@@ -33,7 +33,7 @@ class Hospital {
         const sql = 'INSERT INTO hopital(nom, adresse, ville, mail, telephone) VALUES($1, $2, $3, $4, $5) RETURNING *'
 
         return client.query(sql, [nom, adresse, ville, mail, telephone])
-            .then(result => result)
+            .then(result => new Hospital(result.rows[0]))
             .catch(e => console.error(e.stack))
     }
 
@@ -41,7 +41,7 @@ class Hospital {
         const sql = 'SELECT * FROM utilisateur WHERE hopital_id = $1'
 
         return client.query(sql, [hopital_id])
-            .then(result => result.rows[0])
+            .then(result => new Hospital(result.rows[0]))
             .catch(e => console.error(e.stack))
     }
 
@@ -49,7 +49,7 @@ class Hospital {
         const sql = 'SELECT * FROM utilisateur'
 
         return client.query(sql, [])
-            .then(result => result.rows)
+            .then(result => result.rows.map(res => new Hospital(res)))
             .catch(e => console.error(e.stack))
     }
 }

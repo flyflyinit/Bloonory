@@ -45,7 +45,7 @@ class User {
         const sql = 'INSERT INTO utilisateur(mail_user, nom, prenom, groupe_sanguin, genre, adresse, ville, telephone, password_user) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *'
 
         return client.query(sql, [mail_user, nom, prenom, groupe_sanguin, genre, adresse, ville, telephone, password_user])
-            .then(result => result)
+            .then(result => new User(result.rows[0]))
             .catch(e => console.error(e.stack))
     }
 
@@ -53,7 +53,7 @@ class User {
         const sql = 'SELECT * FROM utilisateur WHERE mail_user = $1'
 
         return client.query(sql, [mail_user])
-            .then(result => result.rows[0])
+            .then(result => new User(result.rows[0]))
             .catch(e => console.error(e.stack))
     }
 }
