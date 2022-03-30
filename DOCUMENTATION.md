@@ -6,7 +6,20 @@
 Bloonory/
 │
 ├── config/
-│   └── database_client.js
+│   ├── database_client.js
+│   ├── database_pool.js
+│   └── moments.js
+│
+├── DOCUMENTATION.md
+├── .env
+│
+├── models/
+│   ├── comments.js
+│   ├── hospital.js
+│   └── user.js
+│
+├── node_modules/
+│   └── ...
 │
 ├── package.json
 ├── package-lock.json
@@ -15,23 +28,25 @@ Bloonory/
 │   └── assets/
 │       └── styles.css
 │
-├── node_modules/
-│   └── ...
-│
 ├── README.md
 │
 ├── script/
-│   └── sql/
-│       ├── create.sql
-│       ├── delete.sql
-│       └── insert.sql
+│   ├── sql/
+│   │   ├── create.sql
+│   │   ├── delete.sql
+│   │   └── insert.sql
+│   └── js/
+│       └── form_validation.js
 │
 ├── server.js
 │
 └── views/
     └── pages/
         ├── about_us.ejs
+        ├── beneficiary.ejs
         ├── comments.ejs
+        ├── create_acount.ejs
+        ├── donator.ejs
         ├── faq.ejs
         ├── footer.ejs
         ├── head.ejs
