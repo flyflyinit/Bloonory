@@ -102,3 +102,7 @@ Permet d'ajouter connect-pg-simple au projet:
 npm i --save connect-pg-simple
 ```
 
+Permet d'ajouter moment au projet:
+```sh
+npm i --save moment
+```
