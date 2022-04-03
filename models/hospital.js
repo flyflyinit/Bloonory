@@ -38,15 +38,23 @@ class Hospital {
     }
 
     static find_byID(hopital_id) {
-        const sql = 'SELECT * FROM utilisateur WHERE hopital_id = $1'
+        const sql = 'SELECT * FROM hopital WHERE hopital_id = $1'
 
         return client.query(sql, [hopital_id])
             .then(result => new Hospital(result.rows[0]))
             .catch(e => console.error(e.stack))
     }
 
+    static find_by_address(address, city) {
+        const sql = 'SELECT * FROM hopital WHERE adresse = $1 AND ville = $2'
+
+        return client.query(sql, [address, city])
+            .then(result => new Hospital(result.rows[0]))
+            .catch(e => console.error(e.stack))
+    }
+
     static find_all() {
-        const sql = 'SELECT * FROM utilisateur'
+        const sql = 'SELECT * FROM hopital'
 
         return client.query(sql, [])
             .then(result => result.rows.map(res => new Hospital(res)))
