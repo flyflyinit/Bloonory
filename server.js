@@ -6,6 +6,9 @@ const express = require("express")
 const bcrypt = require("bcryptjs")
 const session = require('express-session')
 
+// Permet d'utiliser les fonctions des scripts JS
+const verif_authentification = require("./script/js/verif_authentification")
+
 // Créer une instance d'express
 let app = express()
 
@@ -66,12 +69,7 @@ app.post('/home',  (req, res) => {
 app.get('/comments', async (req, res) => {
     const Comments = require('./models/comments')
     const data = await Comments.find_all_and_info_user()
-
-    let connexion = false
-
-    if (req.session.user !== undefined) {
-        connexion = true
-    }
+    const connexion = req.session.user !== undefined
 
     res.render('pages/comments', {comments: data, connexion: connexion})
 })
@@ -172,46 +170,54 @@ app.post('/create_account', async (req, res) => {
 
 // Route vers la page Donator
 app.get('/donator', async (req, res) => {
-    let Hospital = require('./models/hospital')
-    const hospitals = await Hospital.find_all()
+    if (verif_authentification(req.session, res)) {
+        let Hospital = require('./models/hospital')
+        const hospitals = await Hospital.find_all()
 
-    res.render('pages/appointment', {title: "Donator", hospitals: hospitals})
+        res.render('pages/appointment', {title: "Donator", hospitals: hospitals})
+    }
 })
 
 // Permet de créer un rendez-vous en tant que donateur dans la base de donnée
 app.post('/donator', async (req, res) => {
-    const { date, start, end } = req.body
-    const address = end.split(',')
+    if (verif_authentification(req.session, res)) {
+        const { date, start, end } = req.body
+        const address = end.split(',')
 
-    let Hospital = require('./models/hospital')
-    const hospitals = await Hospital.find_by_address(address[0], address[1])
+        let Hospital = require('./models/hospital')
+        const hospitals = await Hospital.find_by_address(address[0], address[1])
 
-    let Appointment = require('./models/appointment')
-    await Appointment.create(req.session.user.mail_user, hospitals.hopital_id, date, "donnation", "incoming", "no information")
+        let Appointment = require('./models/appointment')
+        await Appointment.create(req.session.user.mail_user, hospitals.hopital_id, date, "donnation", "incoming", "no information")
 
-    res.redirect('/home')
+        res.redirect('/home')
+    }
 })
 
 // Route vers la page Beneficiary
 app.get('/beneficiary', async (req, res) => {
-    let Hospital = require('./models/hospital')
-    const hospitals = await Hospital.find_all()
+    if (verif_authentification(req.session, res)) {
+        let Hospital = require('./models/hospital')
+        const hospitals = await Hospital.find_all()
 
-    res.render('pages/appointment', {title: "Beneficiary", hospitals: hospitals})
+        res.render('pages/appointment', {title: "Beneficiary", hospitals: hospitals})
+    }
 })
 
 // Permet de créer un rendez-vous en tant que bénéficiaire dans la base de donnée
 app.post('/beneficiary', async (req, res) => {
-    const { date, start, end } = req.body
-    const address = end.split(',')
+    if (verif_authentification(req.session, res)) {
+        const {date, start, end} = req.body
+        const address = end.split(',')
 
-    let Hospital = require('./models/hospital')
-    const hospitals = await Hospital.find_by_address(address[0], address[1])
+        let Hospital = require('./models/hospital')
+        const hospitals = await Hospital.find_by_address(address[0], address[1])
 
-    let Appointment = require('./models/appointment')
-    await Appointment.create(req.session.user.mail_user, hospitals.hopital_id, date, "beneficiary", "incoming", "no information")
+        let Appointment = require('./models/appointment')
+        await Appointment.create(req.session.user.mail_user, hospitals.hopital_id, date, "beneficiary", "incoming", "no information")
 
-    res.redirect('/home')
+        res.redirect('/home')
+    }
 })
 
 // Permet de rediger toutes les autres url vers la page Home
