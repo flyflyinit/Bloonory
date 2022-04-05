@@ -5,15 +5,17 @@
 <%- include('header'); -%>
 <div class="container col-lg-6 mx-auto ">
     <h1 class="display-5 fw-bold">Partners</h1>
-    <p class="text-center lead">
-        Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-        tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
-        quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-        consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
-        cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
-        proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-    </p>
+    <div id="map"></div>
 </div>
+
+<script id="data" type="application/json"><%- JSON.stringify(hospitals) %></script>
+<script src="/script/js/google_map_partners.js"></script>
+
+<!-- Async script executes immediately and must be after any DOM elements used in callback. -->
+<script
+        src="https://maps.googleapis.com/maps/api/js?key=<%= process.env.KEY_API_GOOGLEMAP %>&callback=initMap&v=weekly"
+        async
+></script>
 <%- include('footer'); -%>
 </body>
 </html>
