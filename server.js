@@ -85,8 +85,17 @@ app.post('/comments', async (req, res) => {
 })
 
 // Route vers la page Partners
-app.get('/partners', (req, res) => {
-    res.render('pages/partners')
+app.get('/partners', async (req, res) => {
+    let Hospital = require('./models/hospital')
+    const hospitals = await Hospital.find_all()
+
+    const array_address = []
+
+    for (const hospital in hospitals) {
+        array_address.push({address: hospitals[hospital].adresse, city : hospitals[hospital].ville})
+    }
+
+    res.render('pages/partners', {hospitals: array_address})
 })
 
 // Route vers la page FAQs
