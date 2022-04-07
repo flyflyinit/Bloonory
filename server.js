@@ -46,7 +46,7 @@ app.get('/', (req, res) => {
 
 // Route vers la page Homepage
 app.get('/home', (req, res) => {
-    res.render('pages/index')
+    res.render('pages/index', {connected : verif_authentification(req.session)})
 })
 
 // Method post pour la redirection des boutons donator et beneficiary
@@ -95,17 +95,17 @@ app.get('/partners', async (req, res) => {
         array_address.push({address: hospitals[hospital].adresse, city : hospitals[hospital].ville})
     }
 
-    res.render('pages/partners', {hospitals: array_address})
+    res.render('pages/partners', {hospitals: array_address, connected : verif_authentification(req.session)})
 })
 
 // Route vers la page FAQs
 app.get('/faq', (req, res) => {
-    res.render('pages/faq')
+    res.render('pages/faq', {connected : verif_authentification(req.session)})
 })
 
 // Route vers la page About us
 app.get('/about_us', (req, res) => {
-    res.render('pages/about_us')
+    res.render('pages/about_us', {connected : verif_authentification(req.session)})
 })
 
 // Route vers la page Login
@@ -177,19 +177,42 @@ app.post('/create_account', async (req, res) => {
     }
 })
 
+// Route vers la page My Account
+app.get('/my_account', async (req, res) => {
+    if (verif_authentification(req.session)) {
+        res.render('pages/my_account', {connected: true})
+    } else {
+        res.redirect('/login')
+    }
+})
+
+// Permet de ce deconnecter ou de modifier les infos de l'utilisateur
+app.post('/my_account', (req, res) => {
+    if (verif_authentification(req.session)) {
+        if (req.body.hasOwnProperty("log_out")) {
+            req.session.destroy((err) => { })
+            res.redirect('/home')
+        }
+    } else {
+        res.redirect('/login')
+    }
+})
+
 // Route vers la page Donator
 app.get('/donator', async (req, res) => {
-    if (verif_authentification(req.session, res)) {
+    if (verif_authentification(req.session)) {
         let Hospital = require('./models/hospital')
         const hospitals = await Hospital.find_all()
 
-        res.render('pages/appointment', {title: "Donator", hospitals: hospitals})
+        res.render('pages/appointment', {title: "Donator", hospitals: hospitals, connected: true})
+    } else {
+        res.redirect('/login')
     }
 })
 
 // Permet de créer un rendez-vous en tant que donateur dans la base de donnée
 app.post('/donator', async (req, res) => {
-    if (verif_authentification(req.session, res)) {
+    if (verif_authentification(req.session)) {
         const { date, start, end } = req.body
         const address = end.split(',')
 
@@ -200,22 +223,26 @@ app.post('/donator', async (req, res) => {
         await Appointment.create(req.session.user.mail_user, hospitals.hopital_id, date, "donnation", "incoming", "no information")
 
         res.redirect('/home')
+    } else {
+        res.redirect('/login')
     }
 })
 
 // Route vers la page Beneficiary
 app.get('/beneficiary', async (req, res) => {
-    if (verif_authentification(req.session, res)) {
+    if (verif_authentification(req.session)) {
         let Hospital = require('./models/hospital')
         const hospitals = await Hospital.find_all()
 
-        res.render('pages/appointment', {title: "Beneficiary", hospitals: hospitals})
+        res.render('pages/appointment', {title: "Beneficiary", hospitals: hospitals, connected: true})
+    } else {
+        res.redirect('/login')
     }
 })
 
 // Permet de créer un rendez-vous en tant que bénéficiaire dans la base de donnée
 app.post('/beneficiary', async (req, res) => {
-    if (verif_authentification(req.session, res)) {
+    if (verif_authentification(req.session)) {
         const {date, start, end} = req.body
         const address = end.split(',')
 
@@ -226,6 +253,8 @@ app.post('/beneficiary', async (req, res) => {
         await Appointment.create(req.session.user.mail_user, hospitals.hopital_id, date, "beneficiary", "incoming", "no information")
 
         res.redirect('/home')
+    } else {
+        res.redirect('/login')
     }
 })
 
