@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <%- include('head'); -%>
-<body>
-<%- include('header'); -%>
+<body class="d-flex flex-column min-vh-100">
+<%- include('header', {connexion:connexion}); -%>
 <div class="container col-lg-6 mx-auto">
     <h1 class="display-5 fw-bold text-center">Comments</h1>
     <% if (connexion === true) { %>

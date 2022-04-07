@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <%- include('head'); -%>
-<body class="text-center">
-<%- include('header'); -%>
-<div class="container col-lg-6 mx-auto ">
+<body class="text-center d-flex flex-column min-vh-100">
+<%- include('header', {connexion:connected}); -%>
+<div class="container col-lg-6 mx-auto">
     <h1 class="display-5 fw-bold">Partners</h1>
-    <div id="map"></div>
+    <div class="my-3" id="map"></div>
 </div>
 
 <script id="data" type="application/json"><%- JSON.stringify(hospitals) %></script>
