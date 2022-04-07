@@ -14,6 +14,7 @@ Bloonory/
 ├── .env
 │
 ├── models/
+│   ├── appointment.js
 │   ├── comments.js
 │   ├── hospital.js
 │   └── user.js
@@ -36,23 +37,26 @@ Bloonory/
 │   │   ├── delete.sql
 │   │   └── insert.sql
 │   └── js/
-│       └── form_validation.js
+│       ├── form_validation.js
+│       ├── google_map_donator.js
+│       ├── google_map_partners.js
+│       └── verif_authentification.js
 │
 ├── server.js
 │
 └── views/
     └── pages/
         ├── about_us.ejs
-        ├── beneficiary.ejs
+        ├── appointment.ejs
         ├── comments.ejs
         ├── create_acount.ejs
-        ├── donator.ejs
         ├── faq.ejs
         ├── footer.ejs
         ├── head.ejs
         ├── header.ejs
         ├── index.ejs
         ├── login.ejs
+        ├── my_account.ejs
         └── partners.ejs
 ```
 
