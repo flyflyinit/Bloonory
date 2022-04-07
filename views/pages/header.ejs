@@ -11,6 +11,10 @@
         <li class="nav-item"><a href="/partners" class="nav-link">Partners</a></li>
         <li class="nav-item"><a href="/faq" class="nav-link">FAQs</a></li>
         <li class="nav-item"><a href="/about_us" class="nav-link">About</a></li>
-        <li class="nav-item"><a href="/login" class="nav-link active" aria-current="page">Connexion</a></li>
+        <% if (connexion === true) { %>
+            <li class="nav-item"><a href="/my_account" class="nav-link active" aria-current="page">My account</a></li>
+        <% } else { %>
+            <li class="nav-item"><a href="/login" class="nav-link active" aria-current="page">Connexion</a></li>
+        <% } %>
     </ul>
 </header>
