@@ -1,5 +1,5 @@
 let client = require('../config/database_client')
-let moment = require('../config/moment')
+const moment = require("moment");
 
 class Comments {
     constructor(row) {

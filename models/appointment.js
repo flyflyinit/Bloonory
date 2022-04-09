@@ -52,6 +52,14 @@ class Appointment {
             .then(result => result.rows.map(res => new Appointment(res)))
             .catch(e => console.error(e.stack))
     }
+
+    static update_type(status, information, mail_consumer, hospital_id, date_appointment) {
+        const sql = 'UPDATE appointment SET status = $1, information = $2 WHERE mail_consumer = $3 AND hospital_id = $4 AND date_appointment = $5'
+
+        return client.query(sql, [status, information, mail_consumer, hospital_id, date_appointment])
+            .then(result => new Appointment(result.rows[0]))
+            .catch(e => console.error(e.stack))
+    }
 }
 
 module.exports = Appointment
