@@ -6,6 +6,8 @@
 <div class="container col-lg-6 mx-auto">
     <h1 class="mb-3 text-center fs-8 fw-bold">Welcome <%= user.first_name.charAt(0).toUpperCase() + user.first_name.slice(1); %></h1>
     <form method="post" class="needs-validation" novalidate="">
+        <hr class="my-4">
+        <h2 class="mb-2 fs-7 fw-bold">Make modification:</h2>
         <div class="row g-3">
             <div class="col-12">
                 <label for="address" class="form-label">Address</label>
@@ -37,8 +39,21 @@
                 <button name="log_out" class="w-100 btn btn-danger btn-lg" type="submit">Log out</button>
             </div>
         </div>
-
-
+        <hr class="my-4">
+        <h2 class="mb-2 fs-7 fw-bold">Your current Appointments:</h2>
+        <% for (appointment of appointments) { %>
+        <div class="card">
+            <div class="card-header">
+                <%= appointment.type_appointment %>
+            </div>
+            <div class="card-body">
+                <h5 class="card-title"><%= appointment.name %>: <%= appointment.address %>, <%= appointment.city %></h5>
+                <p class="card-text">For: <%= appointment.date_appointment.format("MMMM Do YYYY") %> </p>
+                <button name="delete" class="btn btn-danger" type="submit" value="<%= user.mail_consumer %>,<%= appointment.hospital_id %>,<%= appointment.date_appointment %>">Delete</button>
+            </div>
+        </div>
+        <br>
+        <% } %>
     </form>
 </div>
 <%- include('footer'); -%>
