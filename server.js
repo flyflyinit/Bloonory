@@ -30,6 +30,8 @@ const User = require("./models/user");
 const Comments = require('./models/comments');
 const Hospital = require("./models/hospital");
 const Appointment = require("./models/appointment");
+const AppointmentRHospital = require("./models/appointment_relation_hospital");
+const moment = require("moment");
 
 // Permet de setup une session express
 app.use(session({
@@ -182,8 +184,9 @@ app.post('/create_account', async (req, res) => {
 app.get('/my_account', async (req, res) => {
     if (verif_authentification(req.session)) {
         const user = await User.find(req.session.user.mail_user)
+        const appointments = await AppointmentRHospital.find(req.session.user.mail_user, "incoming")
 
-        res.render('pages/my_account', {user: user, connected: true})
+        res.render('pages/my_account', {user: user, appointments: appointments, connected: true})
     } else {
         res.redirect('/login')
     }
@@ -200,7 +203,15 @@ app.post('/my_account', async (req, res) => {
             const { address, city, phone_number } = req.body
             await User.update_info(req.session.user.mail_user, address, city, phone_number)
             res.redirect('/home')
+        } else {
+            const data = req.body['delete'].split(',')
+            const information = `Delete by client at ${moment()}`
+            const date = moment(new Date(data[2])).format("YYYY-MM-DD")
+
+            await Appointment.update_type('cancel', information, data[0], data[1], date)
+            res.redirect('/my_account')
         }
+
     } else {
         res.redirect('/login')
     }
