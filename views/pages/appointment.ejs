@@ -16,10 +16,15 @@
         <!--The div element for the map -->
         <div id="floating-panel">
             <h3 class="fs-6 fw-bold">Start:</h3>
-            <input name="start" type="text" class="form-control" id="start" placeholder="your localisation" required="">
+            <input name="start" type="text" class="form-control" id="start" placeholder="your localisation" value="<%= address %>" required="">
             <br>
-            <h3 class="fs-6 fw-bold">End:</h3>
+            <% if (locals.flash && locals.flash.error) { %>
+                <h3 class="fs-6 fw-bold error">End: <%= flash.error %></h3>
+            <% } else {%>
+                <h3 class="fs-6 fw-bold">End:</h3>
+            <% } %>
             <select name="end" id="end" class="form-select">
+                <option value="">Choose...</option>
                 <% for (const hospital of hospitals) { %>
                     <option value="<%= hospital.address %>,<%= hospital.city %>"><%= hospital.city %>, <%= hospital.name %></option>
                 <% } %>
