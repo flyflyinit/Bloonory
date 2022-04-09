@@ -190,10 +190,15 @@ app.get('/my_account', async (req, res) => {
 })
 
 // Permet de ce deconnecter ou de modifier les infos de l'utilisateur
-app.post('/my_account', (req, res) => {
+app.post('/my_account', async (req, res) => {
     if (verif_authentification(req.session)) {
         if (req.body.hasOwnProperty("log_out")) {
-            req.session.destroy((err) => { })
+            req.session.destroy((err) => {
+            })
+            res.redirect('/home')
+        } else if (req.body.hasOwnProperty("apply")) {
+            const { address, city, phone_number } = req.body
+            await User.update_info(req.session.user.mail_user, address, city, phone_number)
             res.redirect('/home')
         }
     } else {
