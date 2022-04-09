@@ -56,6 +56,14 @@ class User {
             .then(result => new User(result.rows[0]))
             .catch(e => console.error(e.stack))
     }
+
+    static update_info(mail_consumer, address, city, phone_number) {
+        const sql = 'UPDATE consumer SET address = $1, city = $2, phone_number = $3 WHERE mail_consumer = $4'
+
+        return client.query(sql, [address, city, phone_number, mail_consumer])
+            .then()
+            .catch(e => console.error(e.stack))
+    }
 }
 
 module.exports = User
