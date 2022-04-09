@@ -4,8 +4,8 @@
 }
 
 .btn-danger {
-    background-color: #FF0000 !important;
-    border-color: #FF0000 !important;
+    background-color: #f13030 !important;
+    border-color: #f13030 !important;
 }
 
 .nav-link {
@@ -20,7 +20,7 @@
 }
 
 .error {
-    color: #FF0000 !important;
+    color: #f13030 !important;
 }
 
 .form-signin {
