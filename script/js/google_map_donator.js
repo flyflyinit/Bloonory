@@ -7,10 +7,13 @@ function initMap() {
         center: { lat: 48.52, lng: 2.19 },
     });
 
-    directionsRenderer.setMap(map);
-
     const onChangeHandler = function () {
-        calculateAndDisplayRoute(directionsService, directionsRenderer);
+        if (document.getElementById("start").value !== "" && document.getElementById("end").value !== "") {
+            directionsRenderer.setMap(map);
+            calculateAndDisplayRoute(directionsService, directionsRenderer);
+        } else {
+            directionsRenderer.setMap(null);
+        }
     };
 
     document.getElementById("start").addEventListener("change", onChangeHandler);
