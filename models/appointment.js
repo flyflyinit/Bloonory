@@ -5,20 +5,20 @@ class Appointment {
         this.row = row
     }
 
-    get mail_user() {
-        return this.row.mail_user
+    get mail_consumer() {
+        return this.row.mail_consumer
     }
 
-    get hopital_id() {
-        return this.row.hopital_id
+    get hospital_id() {
+        return this.row.hospital_id
     }
 
-    get date_rdv() {
-        return this.row.date_rdv
+    get date_appointment() {
+        return this.row.date_appointment
     }
 
-    get type_rdv() {
-        return this.row.type_rdv
+    get type_appointment() {
+        return this.row.type_appointment
     }
 
     get status() {
@@ -29,24 +29,24 @@ class Appointment {
         return this.row.information
     }
 
-    static create(mail_user, hopital_id, date_rdv, type_rdv, status, information) {
-        const sql = 'INSERT INTO rendez_vous(mail_user, hopital_id, date_rdv, type_rdv, status, information) VALUES($1, $2, $3, $4, $5, $6) RETURNING *'
+    static create(mail_consumer, hospital_id, date_appointment, type_appointment, status, information) {
+        const sql = 'INSERT INTO appointment(mail_consumer, hospital_id, date_appointment, type_appointment, status, information) VALUES($1, $2, $3, $4, $5, $6) RETURNING *'
 
-        return client.query(sql, [mail_user, hopital_id, date_rdv, type_rdv, status, information])
+        return client.query(sql, [mail_consumer, hospital_id, date_appointment, type_appointment, status, information])
             .then(result => new Appointment(result.rows[0]))
             .catch(e => console.error(e.stack))
     }
 
-    static find_byUser(mail_user) {
-        const sql = 'SELECT * FROM rendez_vous WHERE mail_user = $1'
+    static find_byUser(mail_consumer) {
+        const sql = 'SELECT * FROM appointment WHERE mail_consumer = $1'
 
-        return client.query(sql, [mail_user])
+        return client.query(sql, [mail_consumer])
             .then(result => result.rows.map(res => new Appointment(res)))
             .catch(e => console.error(e.stack))
     }
 
     static find_all() {
-        const sql = 'SELECT * FROM rendez_vous'
+        const sql = 'SELECT * FROM appointment'
 
         return client.query(sql, [])
             .then(result => result.rows.map(res => new Appointment(res)))

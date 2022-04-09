@@ -5,48 +5,48 @@ class Hospital {
         this.row = row
     }
 
-    get hopital_id() {
-        return this.row.hopital_id
+    get hospital_id() {
+        return this.row.hospital_id
     }
 
-    get nom() {
-        return this.row.nom
+    get name() {
+        return this.row.name
     }
 
-    get adresse() {
-        return this.row.adresse
+    get address() {
+        return this.row.address
     }
 
-    get ville() {
-        return this.row.ville
+    get city() {
+        return this.row.city
     }
 
     get mail() {
         return this.row.mail
     }
 
-    get telephone() {
-        return this.row.telephone
+    get phone_number() {
+        return this.row.phone_number
     }
 
-    static create(nom, adresse, ville, mail, telephone) {
-        const sql = 'INSERT INTO hopital(nom, adresse, ville, mail, telephone) VALUES($1, $2, $3, $4, $5) RETURNING *'
+    static create(name, address, city, mail, phone_number) {
+        const sql = 'INSERT INTO hospital(name, address, city, mail, phone_number) VALUES($1, $2, $3, $4, $5) RETURNING *'
 
-        return client.query(sql, [nom, adresse, ville, mail, telephone])
+        return client.query(sql, [name, address, city, mail, phone_number])
             .then(result => new Hospital(result.rows[0]))
             .catch(e => console.error(e.stack))
     }
 
-    static find_byID(hopital_id) {
-        const sql = 'SELECT * FROM hopital WHERE hopital_id = $1'
+    static find_byID(hospital_id) {
+        const sql = 'SELECT * FROM hospital WHERE hospital_id = $1'
 
-        return client.query(sql, [hopital_id])
+        return client.query(sql, [hospital_id])
             .then(result => new Hospital(result.rows[0]))
             .catch(e => console.error(e.stack))
     }
 
     static find_by_address(address, city) {
-        const sql = 'SELECT * FROM hopital WHERE adresse = $1 AND ville = $2'
+        const sql = 'SELECT * FROM hospital WHERE address = $1 AND city = $2'
 
         return client.query(sql, [address, city])
             .then(result => new Hospital(result.rows[0]))
@@ -54,7 +54,7 @@ class Hospital {
     }
 
     static find_all() {
-        const sql = 'SELECT * FROM hopital'
+        const sql = 'SELECT * FROM hospital'
 
         return client.query(sql, [])
             .then(result => result.rows.map(res => new Hospital(res)))

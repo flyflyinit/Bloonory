@@ -5,54 +5,54 @@ class User {
         this.row = row
     }
 
-    get mail() {
-        return this.row.mail_user
-    }
-
-    get first_name() {
-        return this.row.nom
+    get mail_consumer() {
+        return this.row.mail_consumer
     }
 
     get last_name() {
-        return this.row.prenom
+        return this.row.last_name
+    }
+
+    get first_name() {
+        return this.row.first_name
     }
 
     get address() {
-        return this.row.adresse
+        return this.row.address
     }
 
     get city() {
-        return this.row.ville
+        return this.row.city
     }
 
     get phone_number() {
-        return this.row.telephone
+        return this.row.phone_number
     }
 
     get gender() {
-        return this.row.genre
+        return this.row.gender
     }
 
     get blood_group() {
-        return this.row.groupe_sanguin
+        return this.row.blood_group
     }
 
-    get password() {
+    get password_user() {
         return this.row.password_user
     }
 
-    static create(mail_user, nom, prenom, groupe_sanguin, genre, adresse, ville, telephone, password_user) {
-        const sql = 'INSERT INTO utilisateur(mail_user, nom, prenom, groupe_sanguin, genre, adresse, ville, telephone, password_user) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *'
+    static create(mail_consumer, last_name, first_name, blood_group, gender, address, city, phone_number, password_user) {
+        const sql = 'INSERT INTO consumer(mail_consumer, last_name, first_name, blood_group, gender, address, city, phone_number, password_user) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *'
 
-        return client.query(sql, [mail_user, nom, prenom, groupe_sanguin, genre, adresse, ville, telephone, password_user])
+        return client.query(sql, [mail_consumer, last_name, first_name, blood_group, gender, address, city, phone_number, password_user])
             .then(result => new User(result.rows[0]))
             .catch(e => console.error(e.stack))
     }
 
-    static find(mail_user) {
-        const sql = 'SELECT * FROM utilisateur WHERE mail_user = $1'
+    static find(mail_consumer) {
+        const sql = 'SELECT * FROM consumer WHERE mail_consumer = $1'
 
-        return client.query(sql, [mail_user])
+        return client.query(sql, [mail_consumer])
             .then(result => new User(result.rows[0]))
             .catch(e => console.error(e.stack))
     }

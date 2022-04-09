@@ -92,7 +92,7 @@ app.get('/partners', async (req, res) => {
     const array_address = []
 
     for (const hospital in hospitals) {
-        array_address.push({address: hospitals[hospital].adresse, city : hospitals[hospital].ville})
+        array_address.push({name: hospitals[hospital].name, address: hospitals[hospital].address, city : hospitals[hospital].city})
     }
 
     res.render('pages/partners', {hospitals: array_address, connected : verif_authentification(req.session)})
@@ -119,11 +119,11 @@ app.post('/login', async (req, res) => {
     const User = require('./models/user')
 
     const data = await User.find(email)
-    if (data.row && (bcrypt.compareSync(password, data.password))) {
+    if (data.row && (bcrypt.compareSync(password, data.password_user))) {
         req.session.user = {
-            nom: data.last_name,
-            prenom: data.first_name,
-            mail_user: data.mail,
+            last_name: data.last_name,
+            first_name: data.first_name,
+            mail_user: data.mail_consumer,
         }
 
         res.redirect('/home')
@@ -168,8 +168,8 @@ app.post('/create_account', async (req, res) => {
     const user = User.create(email, lastName, firstName, blood_group, gender, address, city, phone_number, encryptedPassword)
     if (user) {
         req.session.user = {
-            nom: lastName,
-            prenom: firstName,
+            last_name: lastName,
+            first_name: firstName,
             mail_user: email,
         }
 
@@ -220,7 +220,7 @@ app.post('/donator', async (req, res) => {
         const hospitals = await Hospital.find_by_address(address[0], address[1])
 
         let Appointment = require('./models/appointment')
-        await Appointment.create(req.session.user.mail_user, hospitals.hopital_id, date, "donnation", "incoming", "no information")
+        await Appointment.create(req.session.user.mail_user, hospitals.hospital_id, date, "donnation", "incoming", "no information")
 
         res.redirect('/home')
     } else {
@@ -250,7 +250,7 @@ app.post('/beneficiary', async (req, res) => {
         const hospitals = await Hospital.find_by_address(address[0], address[1])
 
         let Appointment = require('./models/appointment')
-        await Appointment.create(req.session.user.mail_user, hospitals.hopital_id, date, "beneficiary", "incoming", "no information")
+        await Appointment.create(req.session.user.mail_user, hospitals.hospital_id, date, "beneficiary", "incoming", "no information")
 
         res.redirect('/home')
     } else {

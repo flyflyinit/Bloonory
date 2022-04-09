@@ -20,8 +20,8 @@
             <br>
             <h3 class="fs-6 fw-bold">End:</h3>
             <select name="end" id="end" class="form-select">
-                <% for (hospital of hospitals) { %>
-                    <option value="<%= hospital.adresse %>,<%= hospital.ville %>"><%= hospital.ville %>, <%= hospital.nom %></option>
+                <% for (const hospital of hospitals) { %>
+                    <option value="<%= hospital.address %>,<%= hospital.city %>"><%= hospital.city %>, <%= hospital.name %></option>
                 <% } %>
             </select>
         </div>
