@@ -1,11 +1,11 @@
-DROP TABLE IF EXISTS poche_sang;
+DROP TABLE IF EXISTS blood_bag;
 
-DROP TABLE IF EXISTS rendez_vous;
+DROP TABLE IF EXISTS appointment;
 
-DROP TABLE IF EXISTS commentaire;
+DROP TABLE IF EXISTS comment;
 
-DROP TABLE IF EXISTS administrateur;
+DROP TABLE IF EXISTS admin;
 
-DROP TABLE IF EXISTS hopital;
+DROP TABLE IF EXISTS hospital;
 
-DROP TABLE IF EXISTS utilisateur;
+DROP TABLE IF EXISTS consumer;
