@@ -26,6 +26,11 @@ app.use(express.urlencoded({ extended: true }))
 const pgSession = require('connect-pg-simple')(session)
 let pgPool = require('./config/database_pool')
 
+const User = require("./models/user");
+const Comments = require('./models/comments');
+const Hospital = require("./models/hospital");
+const Appointment = require("./models/appointment");
+
 // Permet de setup une session express
 app.use(session({
     store: new pgSession({
@@ -37,6 +42,8 @@ app.use(session({
     saveUninitialized: true,
     cookie: { maxAge: 30 * 24 * 60 * 60 * 1000 }
 }));
+
+app.use(require('./script/js/flash'))
 
 // Les routes
 // Route vers la page Homepage
@@ -67,7 +74,6 @@ app.post('/home',  (req, res) => {
 
 // Route vers la page Comments
 app.get('/comments', async (req, res) => {
-    const Comments = require('./models/comments')
     const data = await Comments.find_all_and_info_user()
     const connexion = req.session.user !== undefined
 
@@ -77,8 +83,6 @@ app.get('/comments', async (req, res) => {
 // Permet d'inscrire le commentaire de l'utilisateur connecté dans la base de donnée
 app.post('/comments', async (req, res) => {
     const { comment } = req.body
-    const Comments = require('./models/comments')
-
     await Comments.create(comment, req.session.user.mail_user)
 
     res.redirect('/comments')
@@ -86,7 +90,6 @@ app.post('/comments', async (req, res) => {
 
 // Route vers la page Partners
 app.get('/partners', async (req, res) => {
-    let Hospital = require('./models/hospital')
     const hospitals = await Hospital.find_all()
 
     const array_address = []
@@ -116,9 +119,9 @@ app.get('/login', (req, res) => {
 // Vérifie si l'utilisateur est dans la base de donnée et si le mot de base est correct si c'est le cas créer une session
 app.post('/login', async (req, res) => {
     const {email, password} = req.body
-    const User = require('./models/user')
 
     const data = await User.find(email)
+
     if (data.row && (bcrypt.compareSync(password, data.password_user))) {
         req.session.user = {
             last_name: data.last_name,
@@ -154,8 +157,6 @@ app.get('/create_account', (req, res) => {
 
 // Permet la création d'un compte utilisateur dans la base de donnée
 app.post('/create_account', async (req, res) => {
-    let User = require('./models/user')
-
     const { firstName, lastName, email, password, conf_password, address, city, phone_number, gender, blood_group } = req.body
 
     if (password !== conf_password) {
@@ -180,7 +181,9 @@ app.post('/create_account', async (req, res) => {
 // Route vers la page My Account
 app.get('/my_account', async (req, res) => {
     if (verif_authentification(req.session)) {
-        res.render('pages/my_account', {connected: true})
+        const user = await User.find(req.session.user.mail_user)
+
+        res.render('pages/my_account', {user: user, connected: true})
     } else {
         res.redirect('/login')
     }
@@ -201,10 +204,11 @@ app.post('/my_account', (req, res) => {
 // Route vers la page Donator
 app.get('/donator', async (req, res) => {
     if (verif_authentification(req.session)) {
-        let Hospital = require('./models/hospital')
         const hospitals = await Hospital.find_all()
+        const user = await User.find(req.session.user.mail_user)
+        const address = `${user.address}, ${user.city}`
 
-        res.render('pages/appointment', {title: "Donator", hospitals: hospitals, connected: true})
+        res.render('pages/appointment', {title: "Donator", address: address, hospitals: hospitals, connected: true})
     } else {
         res.redirect('/login')
     }
@@ -214,15 +218,18 @@ app.get('/donator', async (req, res) => {
 app.post('/donator', async (req, res) => {
     if (verif_authentification(req.session)) {
         const { date, start, end } = req.body
-        const address = end.split(',')
+        if (end !== "") {
+            const address = end.split(',')
 
-        let Hospital = require('./models/hospital')
-        const hospitals = await Hospital.find_by_address(address[0], address[1])
+            const hospitals = await Hospital.find_by_address(address[0], address[1])
 
-        let Appointment = require('./models/appointment')
-        await Appointment.create(req.session.user.mail_user, hospitals.hospital_id, date, "donnation", "incoming", "no information")
+            await Appointment.create(req.session.user.mail_user, hospitals.hospital_id, date, "donnation", "incoming", "no information")
 
-        res.redirect('/home')
+            res.redirect('/home')
+        } else {
+            req.flash('error', "Please select an hospital")
+            res.redirect('/donator')
+        }
     } else {
         res.redirect('/login')
     }
@@ -231,10 +238,11 @@ app.post('/donator', async (req, res) => {
 // Route vers la page Beneficiary
 app.get('/beneficiary', async (req, res) => {
     if (verif_authentification(req.session)) {
-        let Hospital = require('./models/hospital')
         const hospitals = await Hospital.find_all()
 
-        res.render('pages/appointment', {title: "Beneficiary", hospitals: hospitals, connected: true})
+        const user = await User.find(req.session.user.mail_user)
+
+        res.render('pages/appointment', {title: "Beneficiary", address: user.address, hospitals: hospitals, connected: true})
     } else {
         res.redirect('/login')
     }
@@ -244,15 +252,18 @@ app.get('/beneficiary', async (req, res) => {
 app.post('/beneficiary', async (req, res) => {
     if (verif_authentification(req.session)) {
         const {date, start, end} = req.body
-        const address = end.split(',')
+        if (end !== '') {
+            const address = end.split(',')
 
-        let Hospital = require('./models/hospital')
-        const hospitals = await Hospital.find_by_address(address[0], address[1])
+            const hospitals = await Hospital.find_by_address(address[0], address[1])
 
-        let Appointment = require('./models/appointment')
-        await Appointment.create(req.session.user.mail_user, hospitals.hospital_id, date, "beneficiary", "incoming", "no information")
+            await Appointment.create(req.session.user.mail_user, hospitals.hospital_id, date, "beneficiary", "incoming", "no information")
 
-        res.redirect('/home')
+            res.redirect('/home')
+        } else {
+            req.flash('error', "Please select an hospital")
+            res.redirect('/beneficiary')
+        }
     } else {
         res.redirect('/login')
     }
