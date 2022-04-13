@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <%- include('head'); -%>
+<link rel="stylesheet" href="//code.jquery.com/ui/1.13.1/themes/base/jquery-ui.css">
 <body class="d-flex flex-column min-vh-100">
 <%- include('header', {connexion:connected}); -%>
 <div class="container col-lg-6 px-4 py-2 my-5">
@@ -9,7 +10,7 @@
         <br>
         <h2 class="fs-4 fw-bold">Select a date:</h2>
         <div class="input-group mb-3">
-            <input name="date" type="date" min="<%= date %>" class="form-control" placeholder="Recipient's username" aria-label="Recipient's username" aria-describedby="button-addon2" required="">
+            <input name="date" type="text" id="datepicker" class="form-control datepicker" placeholder="Pick a date" required="">
         </div>
 
         <h2 class="fs-4 fw-bold">Destination:</h2>
@@ -39,7 +40,11 @@
     </form>
 </div>
 
+<script id="date" type="application/json"><%- JSON.stringify(date) %></script>
 <script src="/script/js/google_map_donator.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+<script src="https://code.jquery.com/ui/1.13.1/jquery-ui.js"></script>
+<script src="/script/js/datepicker.js"></script>
 
 <!-- Async script executes immediately and must be after any DOM elements used in callback. -->
 <script

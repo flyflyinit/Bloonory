@@ -228,9 +228,15 @@ app.get('/donator', async (req, res) => {
         const hospitals = await Hospital.find_all()
         const user = await User.find(req.session.user.mail_user)
         const address = `${user.address}, ${user.city}`
-        const today = new Date().toISOString().split("T")[0]
 
-        res.render('pages/appointment', {title: "Donator", address: address, hospitals: hospitals, connected: true, date: today})
+        const appointments = await Appointment.find_byUser_isIncoming(req.session.user.mail_user)
+        const all_date = []
+
+        for (let appointment in appointments) {
+            all_date.push(moment(new Date(appointments[appointment].date_appointment + 24*60*60*1000)).format("YYYY-MM-DD"))
+        }
+
+        res.render('pages/appointment', {title: "Donator", address: address, hospitals: hospitals, connected: true, date: all_date})
     } else {
         res.redirect('/login')
     }
@@ -242,10 +248,10 @@ app.post('/donator', async (req, res) => {
         const { date, start, end } = req.body
         if (end !== "") {
             const address = end.split(',')
-
+            const format_date = moment(new Date(date)).format("YYYY-MM-DD")
             const hospitals = await Hospital.find_by_address(address[0], address[1])
 
-            await Appointment.create(req.session.user.mail_user, hospitals.hospital_id, date, "donnation", "incoming", "no information")
+            await Appointment.create(req.session.user.mail_user, hospitals.hospital_id, format_date, "donnation", "incoming", "no information")
 
             req.flash('message', "Your appointment is saved")
             res.redirect('/home')
@@ -265,9 +271,14 @@ app.get('/beneficiary', async (req, res) => {
 
         const user = await User.find(req.session.user.mail_user)
 
-        const today = new Date().toISOString().split("T")[0]
+        const appointments = await Appointment.find_byUser_isIncoming(req.session.user.mail_user)
+        const all_date = []
 
-        res.render('pages/appointment', {title: "Beneficiary", address: user.address, hospitals: hospitals, connected: true, date: today})
+        for (let appointment in appointments) {
+            all_date.push(moment(new Date(appointments[appointment].date_appointment + 24*60*60*1000)).format("YYYY-MM-DD"))
+        }
+
+        res.render('pages/appointment', {title: "Beneficiary", address: user.address, hospitals: hospitals, connected: true, date: all_date})
     } else {
         res.redirect('/login')
     }
@@ -279,10 +290,11 @@ app.post('/beneficiary', async (req, res) => {
         const {date, start, end} = req.body
         if (end !== '') {
             const address = end.split(',')
+            const format_date = moment(new Date(date)).format("YYYY-MM-DD")
 
             const hospitals = await Hospital.find_by_address(address[0], address[1])
 
-            await Appointment.create(req.session.user.mail_user, hospitals.hospital_id, date, "beneficiary", "incoming", "no information")
+            await Appointment.create(req.session.user.mail_user, hospitals.hospital_id, format_date, "beneficiary", "incoming", "no information")
 
             req.flash('message', "Your appointment is saved")
             res.redirect('/home')
