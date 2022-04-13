@@ -176,6 +176,7 @@ app.post('/create_account', async (req, res) => {
             mail_user: email,
         }
 
+        req.flash('message', "Your account is created")
         res.redirect('/home')
     }
 })
@@ -202,6 +203,8 @@ app.post('/my_account', async (req, res) => {
         } else if (req.body.hasOwnProperty("apply")) {
             const { address, city, phone_number } = req.body
             await User.update_info(req.session.user.mail_user, address, city, phone_number)
+
+            req.flash('message', "Your account modification is saved")
             res.redirect('/home')
         } else {
             const data = req.body['delete'].split(',')
@@ -209,6 +212,8 @@ app.post('/my_account', async (req, res) => {
             const date = moment(new Date(data[2])).format("YYYY-MM-DD")
 
             await Appointment.update_type('cancel', information, data[0], data[1], date)
+
+            req.flash('message', "Your appoint is correctly cancel")
             res.redirect('/my_account')
         }
 
@@ -242,6 +247,7 @@ app.post('/donator', async (req, res) => {
 
             await Appointment.create(req.session.user.mail_user, hospitals.hospital_id, date, "donnation", "incoming", "no information")
 
+            req.flash('message', "Your appointment is saved")
             res.redirect('/home')
         } else {
             req.flash('error', "Please select an hospital")
@@ -278,6 +284,7 @@ app.post('/beneficiary', async (req, res) => {
 
             await Appointment.create(req.session.user.mail_user, hospitals.hospital_id, date, "beneficiary", "incoming", "no information")
 
+            req.flash('message', "Your appointment is saved")
             res.redirect('/home')
         } else {
             req.flash('error', "Please select an hospital")

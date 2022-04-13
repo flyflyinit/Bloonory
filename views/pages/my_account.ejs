@@ -3,6 +3,7 @@
 <%- include('head'); -%>
 <body class="d-flex flex-column min-vh-100">
 <%- include('header', {connexion:connected}); -%>
+<%- include('modal'); -%>
 <div class="container col-lg-6 mx-auto">
     <h1 class="mb-3 text-center fs-8 fw-bold">Welcome <%= user.first_name.charAt(0).toUpperCase() + user.first_name.slice(1); %></h1>
     <form method="post" class="needs-validation" novalidate="">
