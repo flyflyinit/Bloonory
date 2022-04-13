@@ -40,19 +40,21 @@
             </div>
         </div>
         <hr class="my-4">
-        <h2 class="mb-2 fs-7 fw-bold">Your current Appointments:</h2>
-        <% for (appointment of appointments) { %>
-        <div class="card">
-            <div class="card-header">
-                <%= appointment.type_appointment %>
-            </div>
-            <div class="card-body">
-                <h5 class="card-title"><%= appointment.name %>: <%= appointment.address %>, <%= appointment.city %></h5>
-                <p class="card-text">For: <%= appointment.date_appointment.format("MMMM Do YYYY") %> </p>
-                <button name="delete" class="btn btn-danger" type="submit" value="<%= user.mail_consumer %>,<%= appointment.hospital_id %>,<%= appointment.date_appointment %>">Delete</button>
-            </div>
-        </div>
-        <br>
+        <% if (appointments.length !== 0) { %>
+            <h2 class="mb-2 fs-7 fw-bold">Your current Appointments:</h2>
+            <% for (appointment of appointments) { %>
+                <div class="card">
+                    <div class="card-header">
+                        <%= appointment.type_appointment %>
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title"><%= appointment.name %>: <%= appointment.address %>, <%= appointment.city %></h5>
+                        <p class="card-text">For: <%= appointment.date_appointment.format("MMMM Do YYYY") %> </p>
+                        <button name="delete" class="btn btn-danger" type="submit" value="<%= user.mail_consumer %>,<%= appointment.hospital_id %>,<%= appointment.date_appointment %>">Delete</button>
+                    </div>
+                </div>
+                <br>
+            <% } %>
         <% } %>
     </form>
 </div>
