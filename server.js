@@ -223,8 +223,9 @@ app.get('/donator', async (req, res) => {
         const hospitals = await Hospital.find_all()
         const user = await User.find(req.session.user.mail_user)
         const address = `${user.address}, ${user.city}`
+        const today = new Date().toISOString().split("T")[0]
 
-        res.render('pages/appointment', {title: "Donator", address: address, hospitals: hospitals, connected: true})
+        res.render('pages/appointment', {title: "Donator", address: address, hospitals: hospitals, connected: true, date: today})
     } else {
         res.redirect('/login')
     }
@@ -258,7 +259,9 @@ app.get('/beneficiary', async (req, res) => {
 
         const user = await User.find(req.session.user.mail_user)
 
-        res.render('pages/appointment', {title: "Beneficiary", address: user.address, hospitals: hospitals, connected: true})
+        const today = new Date().toISOString().split("T")[0]
+
+        res.render('pages/appointment', {title: "Beneficiary", address: user.address, hospitals: hospitals, connected: true, date: today})
     } else {
         res.redirect('/login')
     }
