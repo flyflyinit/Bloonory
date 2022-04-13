@@ -45,6 +45,14 @@ class Appointment {
             .catch(e => console.error(e.stack))
     }
 
+    static find_byUser_isIncoming(mail_consumer) {
+        const sql = 'SELECT * FROM appointment WHERE mail_consumer = $1 AND status = $2'
+
+        return client.query(sql, [mail_consumer, "incoming"])
+            .then(result => result.rows.map(res => new Appointment(res)))
+            .catch(e => console.error(e.stack))
+    }
+
     static find_all() {
         const sql = 'SELECT * FROM appointment'
 
