@@ -248,19 +248,36 @@ app.get('/donator', async (req, res) => {
 app.post('/donator', async (req, res) => {
     if (verif_authentification(req.session)) {
         const { date, start, end } = req.body
-        if (end !== "") {
-            const address = end.split(',')
-            const format_date = moment(new Date(date)).format("YYYY-MM-DD")
-            const hospitals = await Hospital.find_by_address(address[0], address[1])
-
-            await Appointment.create(req.session.user.mail_user, hospitals.hospital_id, format_date, "donnation", "incoming", "no information")
-
-            req.flash('message', "Your appointment is saved")
-            res.redirect('/home')
-        } else {
-            req.flash('error', "Please select an hospital")
+        if( !date.match("^(0?[1-9]|1[012])[\\/\\-](0?[1-9]|[12][0-9]|3[01])[\\/\\-]\\d{4}$") ) {
+            req.flash('error_date', "Please select a valid date")
             res.redirect('/donator')
+        } else {
+            if (end !== "") {
+                const address = end.split(',')
+                const format_date = moment(new Date(date)).format("YYYY-MM-DD")
+                const hospitals = await Hospital.find_by_address(address[0], address[1])
+
+                const appointment = await Appointment.find(req.session.user.mail_user, hospitals.hospital_id, format_date)
+                if (appointment.row !== undefined) {
+                    if(appointment.status === "incoming") {
+                        req.flash('error_date', "You have already an appointment at this date")
+                        res.redirect('/donator')
+                    } else if (appointment.status === "cancel"){
+                        await Appointment.update_type("incoming", "Create by user after a cancel at this date",req.session.user.mail_user, hospitals.hospital_id, format_date)
+                        req.flash('message', "Your appointment is saved")
+                        res.redirect('/home')
+                    }
+                } else {
+                    await Appointment.create(req.session.user.mail_user, hospitals.hospital_id, format_date, "donnation", "incoming", "no information")
+                    req.flash('message', "Your appointment is saved")
+                    res.redirect('/home')
+                }
+            } else {
+                req.flash('error', "Please select an hospital")
+                res.redirect('/donator')
+            }
         }
+
     } else {
         res.redirect('/login')
     }
@@ -289,21 +306,37 @@ app.get('/beneficiary', async (req, res) => {
 // Permet de créer un rendez-vous en tant que bénéficiaire dans la base de donnée
 app.post('/beneficiary', async (req, res) => {
     if (verif_authentification(req.session)) {
-        const {date, start, end} = req.body
-        if (end !== '') {
-            const address = end.split(',')
-            const format_date = moment(new Date(date)).format("YYYY-MM-DD")
-
-            const hospitals = await Hospital.find_by_address(address[0], address[1])
-
-            await Appointment.create(req.session.user.mail_user, hospitals.hospital_id, format_date, "beneficiary", "incoming", "no information")
-
-            req.flash('message', "Your appointment is saved")
-            res.redirect('/home')
-        } else {
-            req.flash('error', "Please select an hospital")
+        const { date, start, end } = req.body
+        if( !date.match("^(0?[1-9]|1[012])[\\/\\-](0?[1-9]|[12][0-9]|3[01])[\\/\\-]\\d{4}$") ) {
+            req.flash('error_date', "Please select a valid date")
             res.redirect('/beneficiary')
+        } else {
+            if (end !== "") {
+                const address = end.split(',')
+                const format_date = moment(new Date(date)).format("YYYY-MM-DD")
+                const hospitals = await Hospital.find_by_address(address[0], address[1])
+
+                const appointment = await Appointment.find(req.session.user.mail_user, hospitals.hospital_id, format_date)
+                if (appointment.row !== undefined) {
+                    if(appointment.status === "incoming") {
+                        req.flash('error_date', "You have already an appointment at this date")
+                        res.redirect('/beneficiary')
+                    } else if (appointment.status === "cancel"){
+                        await Appointment.update_type("incoming", "Create by user after a cancel at this date",req.session.user.mail_user, hospitals.hospital_id, format_date)
+                        req.flash('message', "Your appointment is saved")
+                        res.redirect('/home')
+                    }
+                } else {
+                    await Appointment.create(req.session.user.mail_user, hospitals.hospital_id, format_date, "beneficiary", "incoming", "no information")
+                    req.flash('message', "Your appointment is saved")
+                    res.redirect('/home')
+                }
+            } else {
+                req.flash('error', "Please select an hospital")
+                res.redirect('/beneficiary')
+            }
         }
+
     } else {
         res.redirect('/login')
     }

@@ -37,6 +37,14 @@ class Appointment {
             .catch(e => console.error(e.stack))
     }
 
+    static find(mail_consumer, hospital_id, date_appointment) {
+        const sql = 'SELECT * FROM appointment WHERE mail_consumer = $1 AND hospital_id = $2 AND date_appointment = $3'
+
+        return client.query(sql, [mail_consumer, hospital_id, date_appointment])
+            .then(result => new Appointment(result.rows[0]))
+            .catch(e => console.error(e.stack))
+    }
+
     static find_byUser(mail_consumer) {
         const sql = 'SELECT * FROM appointment WHERE mail_consumer = $1'
 

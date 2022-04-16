@@ -8,9 +8,13 @@
     <form method="post">
         <h1 class="text-center display-5 fw-bold"><%= title %></h1>
         <br>
-        <h2 class="fs-4 fw-bold">Select a date:</h2>
+        <% if (locals.flash && locals.flash.error_date) { %>
+            <h2 class="fs-4 fw-bold error"><%= flash.error_date %></h2>
+        <% } else {%>
+            <h2 class="fs-4 fw-bold">Select a date:</h2>
+        <% } %>
         <div class="input-group mb-3">
-            <input name="date" type="text" id="datepicker" class="form-control datepicker" placeholder="Pick a date" required="">
+            <input name="date" type="text" id="datepicker" class="form-control datepicker" placeholder="Pick a date: MM/DD/YYYY" autocomplete="off" required="">
         </div>
 
         <h2 class="fs-4 fw-bold">Destination:</h2>
