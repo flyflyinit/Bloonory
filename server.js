@@ -154,7 +154,8 @@ app.post('/admin', (req, res) => {
 
 // Route vers la page Create an account
 app.get('/create_account', (req, res) => {
-    res.render('pages/create_account')
+    res.render('pages/create_account', { firstName: "", lastName: "", email: "", password: "",
+        message: "", address: "", city: "", phone_number: ""})
 })
 
 // Permet la création d'un compte utilisateur dans la base de donnée
@@ -162,22 +163,23 @@ app.post('/create_account', async (req, res) => {
     const { firstName, lastName, email, password, conf_password, address, city, phone_number, gender, blood_group } = req.body
 
     if (password !== conf_password) {
-        console.log("ERREUR ajouter des warnings")
-    }
-    
-    // Ajouter toutes les conditions nécessaire avant de créer un utilisateur.
-    const encryptedPassword = await bcrypt.hash(password, 10)
+        res.render('pages/create_account', { firstName: firstName, lastName: lastName, email: email,
+            password: password, message: "Not the same password", address: address, city: city, phone_number: phone_number})
+    } else {
+        // Ajouter toutes les conditions nécessaire avant de créer un utilisateur.
+        const encryptedPassword = await bcrypt.hash(password, 10)
 
-    const user = User.create(email, lastName, firstName, blood_group, gender, address, city, phone_number, encryptedPassword)
-    if (user) {
-        req.session.user = {
-            last_name: lastName,
-            first_name: firstName,
-            mail_user: email,
+        const user = User.create(email, lastName, firstName, blood_group, gender, address, city, phone_number, encryptedPassword)
+        if (user) {
+            req.session.user = {
+                last_name: lastName,
+                first_name: firstName,
+                mail_user: email,
+            }
+
+            req.flash('message', "Your account is created")
+            res.redirect('/home')
         }
-
-        req.flash('message', "Your account is created")
-        res.redirect('/home')
     }
 })
 

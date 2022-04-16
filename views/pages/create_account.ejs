@@ -9,7 +9,7 @@
         <div class="row g-3">
             <div class="col-sm-6">
                 <label for="firstName" class="form-label">First name</label>
-                <input name="firstName" type="text" class="form-control" id="firstName" placeholder="" value="" required="">
+                <input name="firstName" type="text" class="form-control" id="firstName" placeholder="" value="<%= firstName %>" required="">
                 <div class="invalid-feedback">
                     Valid first name is required.
                 </div>
@@ -17,7 +17,7 @@
 
             <div class="col-sm-6">
                 <label for="lastName" class="form-label">Last name</label>
-                <input name="lastName" type="text" class="form-control" id="lastName" placeholder="" value="" required="">
+                <input name="lastName" type="text" class="form-control" id="lastName" placeholder="" value="<%= lastName %>" required="">
                 <div class="invalid-feedback">
                     Valid last name is required.
                 </div>
@@ -25,7 +25,7 @@
 
             <div class="col-12">
                 <label for="email" class="form-label">Email</label>
-                <input name="email" type="email" class="form-control" id="email" placeholder="you@example.com" required="">
+                <input name="email" type="email" class="form-control" id="email" placeholder="you@example.com" value="<%= email %>" required="">
                 <div class="invalid-feedback">
                     Please enter a valid email address.
                 </div>
@@ -33,14 +33,18 @@
 
             <div class="col-12">
                 <label for="password" class="form-label">Password</label>
-                <input name="password" type="password" class="form-control" id="password" placeholder="" required="">
+                <input name="password" type="password" class="form-control" id="password" placeholder="" value="<%= password %>" required="">
                 <div class="invalid-feedback">
                     Please enter a valid password.
                 </div>
             </div>
 
             <div class="col-12">
-                <label for="conf_password" class="form-label">Confirm Password</label>
+                <% if (message !== "") { %>
+                    <label for="conf_password" class="form-label error">Confirm Password : <%= message %></label>
+                <% } else {%>
+                    <label for="conf_password" class="form-label">Confirm Password</label>
+                <% } %>
                 <input name="conf_password" type="password" class="form-control" id="conf_password" placeholder="" required="">
                 <div class="invalid-feedback">
                     Please enter the same password.
@@ -49,7 +53,7 @@
 
             <div class="col-12">
                 <label for="address" class="form-label">Address</label>
-                <input name="address" type="text" class="form-control" id="address" placeholder="1234 Main St" required="">
+                <input name="address" type="text" class="form-control" id="address" placeholder="1234 Main St" value="<%= address %>" required="">
                 <div class="invalid-feedback">
                     Please enter your address.
                 </div>
@@ -57,7 +61,7 @@
 
             <div class="col-12">
                 <label for="city" class="form-label">City</label>
-                <input name="city" type="text" class="form-control" id="city" placeholder="Versailles" required="">
+                <input name="city" type="text" class="form-control" id="city" placeholder="Versailles" value="<%= city %>" required="">
                 <div class="invalid-feedback">
                     Please enter your city.
                 </div>
@@ -65,7 +69,7 @@
 
             <div class="col-12">
                 <label for="phone_number" class="form-label">Phone number</label>
-                <input name="phone_number" type="text" class="form-control" id="phone_number" placeholder="0612345678" required="">
+                <input name="phone_number" type="text" class="form-control" id="phone_number" placeholder="0612345678" value="<%= phone_number %>" required="">
                 <div class="invalid-feedback">
                     Please enter your phone number.
                 </div>
