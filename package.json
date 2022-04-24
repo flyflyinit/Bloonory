@@ -26,6 +26,10 @@
     "express-session": "^1.17.2",
     "moment": "^2.29.1",
     "nodemon": "^2.0.15",
-    "pg": "^8.7.3"
+    "pg": "^8.7.3",
+    "axios": "^0.21.0",
+    "body-parser": "^1.19.0",
+    "cors": "^2.8.5",
+    "highcharts": "^8.2.2"
   }
 }
