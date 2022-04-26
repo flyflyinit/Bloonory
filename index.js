@@ -14,5 +14,4 @@ app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(dashboardRoutes.routes);
 
-
 app.listen(3000, () => console.log('App is listning on url http://localhost:3000'));
