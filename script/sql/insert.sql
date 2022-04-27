@@ -21,3 +21,7 @@ VALUES
 INSERT INTO blood_bag (id, hospital_id, blood_group, date_donation, reserved)
 VALUES
     ('TM152709042022AB+', '1', 'AB+', '2022-04-09', false);
+
+INSERT INTO admin (mail_admin, last_name, first_name, phone_number, password_admin)
+VALUES
+    ('RudyT@gmail.com', 'T', 'Rudy', '0647434432', '$2a$10$Zgls3HCupXEEATpPxojIp.Ty0yH2TQ.ILmtqhfROT0VLamjGPl4zm');

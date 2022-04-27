@@ -18,7 +18,9 @@
         </div>
 
         <button class="w-100 btn btn-lg btn-primary" type="submit">Sign in</button>
+        <% if (admin === false) { %>
         <a href="/create_account" class="nav-link">Create an account</a>
+        <% } %>
     </form>
 </main>
 </div>

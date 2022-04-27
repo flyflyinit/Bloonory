@@ -62,6 +62,14 @@ class Appointment_relation_hospital {
             .then(result => result.rows.map(res => new Appointment_relation_hospital(res)))
             .catch(e => console.error(e.stack))
     }
+
+    static find_all_incoming(status) {
+        const sql = 'SELECT * FROM appointment a, hospital h WHERE a.status = $1 AND a.hospital_id = h.hospital_id'
+
+        return client.query(sql, [status])
+            .then(result => result.rows.map(res => new Appointment_relation_hospital(res)))
+            .catch(e => console.error(e.stack))
+    }
 }
 
 module.exports = Appointment_relation_hospital

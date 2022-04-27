@@ -60,6 +60,13 @@ class Hospital {
             .then(result => result.rows.map(res => new Hospital(res)))
             .catch(e => console.error(e.stack))
     }
+    static delete(name, address) {
+        const sql = 'DELETE FROM hospital WHERE name = $1 AND address = $2'
+
+        return client.query(sql, [name, address])
+            .then()
+            .catch(e => console.error(e.stack))
+    }
 }
 
 module.exports = Hospital

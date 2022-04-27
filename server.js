@@ -9,6 +9,8 @@ const session = require('express-session')
 // Permet d'utiliser les fonctions des scripts JS
 const verif_authentification = require("./script/js/verif_authentification")
 
+const verif_authentification_admin = require("./script/js/verif_authentification_admin")
+
 // Créer une instance d'express
 let app = express()
 
@@ -31,6 +33,7 @@ const Comments = require('./models/comments');
 const Hospital = require("./models/hospital");
 const Appointment = require("./models/appointment");
 const AppointmentRHospital = require("./models/appointment_relation_hospital");
+const Admin = require("./models/admin");
 const moment = require("moment");
 
 // Permet de setup une session express
@@ -150,8 +153,9 @@ app.get('/about_us', (req, res) => {
 
 // Route vers la page Login
 app.get('/login', (req, res) => {
-    res.render('pages/login')
+    res.render('pages/login', {admin : false} )
 })
+
 
 // Vérifie si l'utilisateur est dans la base de donnée et si le mot de base est correct si c'est le cas créer une session
 app.post('/login', async (req, res) => {
@@ -175,19 +179,131 @@ app.post('/login', async (req, res) => {
     }
 })
 
-// Route vers la page d'Administration
-app.get('/admin', (req, res) => {
-    res.render('pages/login')
+// Route vers la page Login Admin
+app.get('/login_admin', (req, res) => {
+    res.render('pages/login', {admin: true})
 })
 
-// Vérifie si l'admin est dans la base de donnée et si le mot de base est correct si c'est le cas créer une session
-app.post('/admin', (req, res) => {
-    // Pas encore implémenté
-    console.log(req.body.email)
-    console.log(req.body.password)
+// Vérifie si l'administrateur est dans la base de donnée et si le mot de base est correct si c'est le cas créer une session
+app.post('/login_admin', async (req, res) => {
+    const {email, password} = req.body
+
+    const data = await Admin.find_byMail(email)
+
+    if (data.row && (bcrypt.compareSync(password, data.password_admin))) {
+        req.session.admin = {
+            last_name: data.last_name,
+            first_name: data.first_name,
+            mail_admin: data.mail_admin,
+        }
+
+        res.redirect('/administration')
+    }
+
+    else {
+        req.session.destroy((err) => { })
+        res.redirect('/login_admin')
+    }
 })
 
-// Route vers la page Create an account
+// Route vers la page Create a partner
+app.get('/create_partner', async (req, res) => {
+    if (verif_authentification_admin(req.session)) {
+        const appointments = await AppointmentRHospital.find_all_incoming("incoming")
+        res.render('pages/create_partner', {appointments: appointments})
+    } else res.redirect('/login_admin')
+
+})
+
+// Permet de créer un partner
+app.post('/create_partner', async (req, res) => {
+    if (verif_authentification_admin(req.session)){
+        const {name, address, city, mail, phone_number} = req.body
+
+        await Hospital.create(name, address, city, mail, phone_number)
+
+        req.flash('message', "The hospital is correctly added")
+        res.redirect('/create_partner')
+    }
+    else res.redirect('/login_admin')
+})
+
+// Route vers la page Delete a partner
+app.get('/delete_partner', async (req, res) => {
+    if (verif_authentification_admin(req.session)) {
+        const appointments = await AppointmentRHospital.find_all_incoming("incoming")
+        res.render('pages/delete_partner', {appointments: appointments})
+
+    } else res.redirect('/login_admin')
+})
+
+// Permet de supprimer un partner
+app.post('/delete_partner', async (req, res) => {
+    if (verif_authentification_admin(req.session)){
+        const {name, address} = req.body
+
+        await Hospital.delete(name, address)
+
+        req.flash('message', "The hospital is correctly deleted")
+        res.redirect('/delete_partner')
+    }
+    else res.redirect('/login_admin')
+})
+
+// Route vers la page Log out admin
+app.get('/log_out', (req, res) => {
+    if (verif_authentification_admin(req.session)) {
+        req.session.destroy((err) => {})
+        res.redirect('/login_admin')
+    }
+    else res.redirect('/login_admin')
+
+})
+
+// Route vers la page Appointment admin
+app.get('/appointment_admin', async (req, res) => {
+    if (verif_authentification_admin(req.session)) {
+        const admin = await Admin.find_byMail(req.session.admin.mail_admin)
+        const appointments = await AppointmentRHospital.find_all_incoming( "incoming")
+
+        res.render('pages/appointment_admin', {appointments: appointments})
+    } else {
+        res.redirect('/login_admin')
+    }
+})
+
+// Permet de de modifier les rendez vous côté admin
+app.post('/appointment_admin', async (req, res) => {
+    if (verif_authentification_admin(req.session)) {
+        if (req.body.hasOwnProperty("accept_appointment")){
+
+            const data = req.body['accept_appointment'].split(',')
+            const information = `Accepted by Admin at ${moment()}`
+            const date = moment(new Date(data[2])).format("YYYY-MM-DD")
+
+            await Appointment.update_type('accepted', information, data[0], data[1], date)
+
+            req.flash('message', "The appointment is correctly accepted")
+            res.redirect('/appointment_admin')
+
+        } else if (req.body.hasOwnProperty("delete_appointment")){
+
+            const data = req.body['delete_appointment'].split(',')
+            const information = `Canceled by Admin at ${moment()}`
+            const date = moment(new Date(data[2])).format("YYYY-MM-DD")
+
+            await Appointment.update_type('canceled', information, data[0], data[1], date)
+
+            req.flash('message', "The appointment is correctly canceled")
+            res.redirect('/appointment_admin')
+        }
+
+    } else {
+        res.redirect('/login_admin')
+    }
+})
+
+// Route vers la page Create an accountCreate a partner
 app.get('/create_account', (req, res) => {
     res.render('pages/create_account', { firstName: "", lastName: "", email: "", password: "",
         message: "", address: "", city: "", phone_number: ""})
@@ -230,7 +346,7 @@ app.get('/my_account', async (req, res) => {
     }
 })
 
-// Permet de ce deconnecter ou de modifier les infos de l'utilisateur
+// Permet de se deconnecter ou de modifier les infos de l'utilisateur
 app.post('/my_account', async (req, res) => {
     if (verif_authentification(req.session)) {
         if (req.body.hasOwnProperty("log_out")) {
@@ -258,6 +374,68 @@ app.post('/my_account', async (req, res) => {
         res.redirect('/login')
     }
 })
+
+// Route vers la page Administration
+app.get('/administration', async (req, res) => {
+    if (verif_authentification_admin(req.session)) {
+        res.render('pages/administration')
+    } else {
+        res.redirect('/login_admin')
+    }
+})
+
+// Permet de se deconnecter ou de modifier les infos de l'administrateur
+/*app.post('/administration', async (req, res) => {
+    if (verif_authentification_admin(req.session)) {
+        if (req.body.hasOwnProperty("log_out")) {
+            req.session.destroy((err) => {
+            })
+            res.redirect('/login_admin')
+        } else if (req.body.hasOwnProperty("add")) {
+
+            const { name, address, city, mail, phone_number } = req.body
+
+            await Hospital.create(name, address, city, mail, phone_number)
+
+            req.flash('message', "The hospital is correctly added")
+            res.redirect('/administration')
+
+        } else if (req.body.hasOwnProperty("delete")) {
+
+            const { name, address } = req.body
+
+            await Hospital.delete(name, address)
+
+            req.flash('message', "The hospital is correctly deleted")
+            res.redirect('/administration')
+
+        } else if (req.body.hasOwnProperty("accept_appointment")){
+
+            const data = req.body['accept_appointment'].split(',')
+            const information = `Accepted by Admin at ${moment()}`
+            const date = moment(new Date(data[2])).format("YYYY-MM-DD")
+
+            await Appointment.update_type('accepted', information, data[0], data[1], date)
+
+            req.flash('message', "The appointment is correctly accepted")
+            res.redirect('/administration')
+
+        } else if (req.body.hasOwnProperty("delete_appointment")){
+
+            const data = req.body['delete_appointment'].split(',')
+            const information = `Canceled by Admin at ${moment()}`
+            const date = moment(new Date(data[2])).format("YYYY-MM-DD")
+
+            await Appointment.update_type('canceled', information, data[0], data[1], date)
+
+            req.flash('message', "The appointment is correctly canceled")
+            res.redirect('/administration')
+        }
+
+    } else {
+        res.redirect('/login_admin')
+    }
+})*/
 
 // Route vers la page Donator
 app.get('/donator', async (req, res) => {
