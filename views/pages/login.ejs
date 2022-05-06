@@ -17,6 +17,10 @@
             <label for="floatingPassword">Password</label>
         </div>
 
+        <% if (error === true) { %>
+        <p class="fs-6 fw-bold error">Email or password incorrect</p>
+        <% } %>
+
         <button class="w-100 btn btn-lg btn-primary" type="submit">Sign in</button>
         <% if (admin === false) { %>
         <a href="/create_account" class="nav-link">Create an account</a>
