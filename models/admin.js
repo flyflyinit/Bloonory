@@ -30,7 +30,7 @@ class Admin {
 
         return client.query(sql, [mail_admin, last_name, first_name, phone_number, password_admin])
             .then(result => new Admin(result.rows[0]))
-            .catch(e => console.error(e.stack))
+            .catch()
     }
 
     static find_byMail(mail_admin) {
@@ -38,7 +38,7 @@ class Admin {
 
         return client.query(sql, [mail_admin])
             .then(result => new Admin(result.rows[0]))
-            .catch(e => console.error(e.stack))
+            .catch()
     }
 }
 

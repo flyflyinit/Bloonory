@@ -35,7 +35,7 @@ class Comments {
 
         return client.query(sql, [text_comment, mail_consumer])
             .then(result => new Comments(result.rows[0]))
-            .catch(e => console.error(e.stack))
+            .catch()
     }
 
     static find_all_and_info_user() {
@@ -43,7 +43,7 @@ class Comments {
 
         return client.query(sql, [])
             .then(result => result.rows.map(res => new Comments(res)))
-            .catch(e => console.error(e.stack))
+            .catch()
     }
 
     static find_all() {
@@ -51,7 +51,7 @@ class Comments {
 
         return client.query(sql, [])
             .then(result => result.rows.map(res => new Comments(res)))
-            .catch(e => console.error(e.stack))
+            .catch()
     }
 }
 

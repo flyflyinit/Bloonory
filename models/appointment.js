@@ -34,7 +34,7 @@ class Appointment {
 
         return client.query(sql, [mail_consumer, hospital_id, date_appointment, type_appointment, status, information])
             .then(result => new Appointment(result.rows[0]))
-            .catch(e => console.error(e.stack))
+            .catch()
     }
 
     static find(mail_consumer, hospital_id, date_appointment) {
@@ -42,7 +42,7 @@ class Appointment {
 
         return client.query(sql, [mail_consumer, hospital_id, date_appointment])
             .then(result => new Appointment(result.rows[0]))
-            .catch(e => console.error(e.stack))
+            .catch()
     }
 
     static find_byUser(mail_consumer) {
@@ -50,7 +50,7 @@ class Appointment {
 
         return client.query(sql, [mail_consumer])
             .then(result => result.rows.map(res => new Appointment(res)))
-            .catch(e => console.error(e.stack))
+            .catch()
     }
 
     static find_byUser_isIncoming(mail_consumer) {
@@ -58,7 +58,7 @@ class Appointment {
 
         return client.query(sql, [mail_consumer, "incoming"])
             .then(result => result.rows.map(res => new Appointment(res)))
-            .catch(e => console.error(e.stack))
+            .catch()
     }
 
     static find_all() {
@@ -66,7 +66,7 @@ class Appointment {
 
         return client.query(sql, [])
             .then(result => result.rows.map(res => new Appointment(res)))
-            .catch(e => console.error(e.stack))
+            .catch()
     }
 
     static update_type(status, information, mail_consumer, hospital_id, date_appointment) {
@@ -74,7 +74,7 @@ class Appointment {
 
         return client.query(sql, [status, information, mail_consumer, hospital_id, date_appointment])
             .then(result => new Appointment(result.rows[0]))
-            .catch(e => console.error(e.stack))
+            .catch()
     }
 }
 

@@ -30,7 +30,7 @@ class Blood_bag {
 
         return client.query(sql, [id, hospital_id, blood_group, date_donation, reserved])
             .then(result => new Blood_bag(result.rows[0]))
-            .catch(e => console.error(e.stack))
+            .catch()
     }
 
     static find_byID(id) {
@@ -38,7 +38,7 @@ class Blood_bag {
 
         return client.query(sql, [id])
             .then(result => new Blood_bag(result.rows[0]))
-            .catch(e => console.error(e.stack))
+            .catch()
     }
 
     static find_all() {
@@ -46,7 +46,7 @@ class Blood_bag {
 
         return client.query(sql, [])
             .then(result => result.rows.map(res => new Blood_bag(res)))
-            .catch(e => console.error(e.stack))
+            .catch()
     }
 }
 

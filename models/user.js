@@ -46,7 +46,7 @@ class User {
 
         return client.query(sql, [mail_consumer, last_name, first_name, blood_group, gender, address, city, phone_number, password_user])
             .then(result => new User(result.rows[0]))
-            .catch(e => console.error(e.stack))
+            .catch()
     }
 
     static find(mail_consumer) {
@@ -54,7 +54,7 @@ class User {
 
         return client.query(sql, [mail_consumer])
             .then(result => new User(result.rows[0]))
-            .catch(e => console.error(e.stack))
+            .catch()
     }
 
     static update_info(mail_consumer, address, city, phone_number) {
@@ -62,7 +62,7 @@ class User {
 
         return client.query(sql, [address, city, phone_number, mail_consumer])
             .then()
-            .catch(e => console.error(e.stack))
+            .catch()
     }
 }
 

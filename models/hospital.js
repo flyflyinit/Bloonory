@@ -34,7 +34,7 @@ class Hospital {
 
         return client.query(sql, [name, address, city, mail, phone_number])
             .then(result => new Hospital(result.rows[0]))
-            .catch(e => console.error(e.stack))
+            .catch()
     }
 
     static find_byID(hospital_id) {
@@ -42,7 +42,7 @@ class Hospital {
 
         return client.query(sql, [hospital_id])
             .then(result => new Hospital(result.rows[0]))
-            .catch(e => console.error(e.stack))
+            .catch()
     }
 
     static find_by_address(address, city) {
@@ -50,7 +50,7 @@ class Hospital {
 
         return client.query(sql, [address, city])
             .then(result => new Hospital(result.rows[0]))
-            .catch(e => console.error(e.stack))
+            .catch()
     }
 
     static find_all() {
@@ -58,14 +58,14 @@ class Hospital {
 
         return client.query(sql, [])
             .then(result => result.rows.map(res => new Hospital(res)))
-            .catch(e => console.error(e.stack))
+            .catch()
     }
     static delete(name, address) {
         const sql = 'DELETE FROM hospital WHERE name = $1 AND address = $2'
 
         return client.query(sql, [name, address])
             .then()
-            .catch(e => console.error(e.stack))
+            .catch()
     }
 }
 

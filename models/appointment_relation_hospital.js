@@ -60,7 +60,7 @@ class Appointment_relation_hospital {
 
         return client.query(sql, [mail_consumer, status])
             .then(result => result.rows.map(res => new Appointment_relation_hospital(res)))
-            .catch(e => console.error(e.stack))
+            .catch()
     }
 
     static find_all_incoming(status) {
@@ -68,7 +68,7 @@ class Appointment_relation_hospital {
 
         return client.query(sql, [status])
             .then(result => result.rows.map(res => new Appointment_relation_hospital(res)))
-            .catch(e => console.error(e.stack))
+            .catch()
     }
 }
 
