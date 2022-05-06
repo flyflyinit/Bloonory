@@ -21,6 +21,9 @@ app.set('view engine', 'ejs')
 app.use('/public', express.static('public'))
 app.use('/script', express.static('script'))
 
+// Permet de désactiver x-powered-by
+app.disable("x-powered-by");
+
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
@@ -77,8 +80,6 @@ app.post('/home',  (req, res) => {
     }
 })
 
-
-
 // Dashboard
 app.get('/dashboard', async (req, res) => {
     const cors = require('cors');
@@ -94,8 +95,6 @@ app.get('/dashboard', async (req, res) => {
     if (req.session.user !== undefined) {
         connexion = true
     }
-    
-
 
     res.render('pages/dashboard', {comments: data, connexion: connexion})
 })
@@ -108,9 +107,6 @@ app.post('/dashboard', async (req, res) => {
 
     res.redirect('/dashboard')
 })
-
-
-
 
 // Route vers la page Comments
 app.get('/comments', async (req, res) => {
@@ -153,9 +149,8 @@ app.get('/about_us', (req, res) => {
 
 // Route vers la page Login
 app.get('/login', (req, res) => {
-    res.render('pages/login', {admin : false} )
+    res.render('pages/login', {admin : false, error : false})
 })
-
 
 // Vérifie si l'utilisateur est dans la base de donnée et si le mot de base est correct si c'est le cas créer une session
 app.post('/login', async (req, res) => {
@@ -171,17 +166,15 @@ app.post('/login', async (req, res) => {
         }
 
         res.redirect('/home')
-    }
-
-    else {
+    } else {
         req.session.destroy((err) => { })
-        res.redirect('/login')
+        res.render('pages/login', {admin : false, error : true})
     }
 })
 
 // Route vers la page Login Admin
 app.get('/login_admin', (req, res) => {
-    res.render('pages/login', {admin: true})
+    res.render('pages/login', {admin : false, error : false})
 })
 
 // Vérifie si l'administrateur est dans la base de donnée et si le mot de base est correct si c'est le cas créer une session
@@ -198,11 +191,9 @@ app.post('/login_admin', async (req, res) => {
         }
 
         res.redirect('/administration')
-    }
-
-    else {
+    } else {
         req.session.destroy((err) => { })
-        res.redirect('/login_admin')
+        res.render('pages/login', {admin : false, error : true})
     }
 })
 
@@ -211,7 +202,9 @@ app.get('/create_partner', async (req, res) => {
     if (verif_authentification_admin(req.session)) {
         const appointments = await AppointmentRHospital.find_all_incoming("incoming")
         res.render('pages/create_partner', {appointments: appointments})
-    } else res.redirect('/login_admin')
+    } else {
+        res.redirect('/login_admin')
+    }
 
 })
 
@@ -224,8 +217,9 @@ app.post('/create_partner', async (req, res) => {
 
         req.flash('message', "The hospital is correctly added")
         res.redirect('/create_partner')
+    } else {
+        res.redirect('/login_admin')
     }
-    else res.redirect('/login_admin')
 })
 
 // Route vers la page Delete a partner
@@ -234,7 +228,9 @@ app.get('/delete_partner', async (req, res) => {
         const appointments = await AppointmentRHospital.find_all_incoming("incoming")
         res.render('pages/delete_partner', {appointments: appointments})
 
-    } else res.redirect('/login_admin')
+    } else {
+        res.redirect('/login_admin')
+    }
 })
 
 // Permet de supprimer un partner
@@ -246,8 +242,9 @@ app.post('/delete_partner', async (req, res) => {
 
         req.flash('message', "The hospital is correctly deleted")
         res.redirect('/delete_partner')
+    } else {
+        res.redirect('/login_admin')
     }
-    else res.redirect('/login_admin')
 })
 
 // Route vers la page Log out admin
@@ -255,9 +252,9 @@ app.get('/log_out', (req, res) => {
     if (verif_authentification_admin(req.session)) {
         req.session.destroy((err) => {})
         res.redirect('/login_admin')
+    } else {
+        res.redirect('/login_admin')
     }
-    else res.redirect('/login_admin')
-
 })
 
 // Route vers la page Appointment admin
@@ -318,7 +315,8 @@ app.post('/create_account', async (req, res) => {
             password: password, message: "Not the same password", address: address, city: city, phone_number: phone_number})
     } else {
         // Ajouter toutes les conditions nécessaire avant de créer un utilisateur.
-        const encryptedPassword = await bcrypt.hash(password, 10)
+        const salt = await bcrypt.genSalt(10)
+        const encryptedPassword = await bcrypt.hash(password, salt)
 
         const user = User.create(email, lastName, firstName, blood_group, gender, address, city, phone_number, encryptedPassword)
         if (user) {
@@ -355,10 +353,17 @@ app.post('/my_account', async (req, res) => {
             res.redirect('/home')
         } else if (req.body.hasOwnProperty("apply")) {
             const { address, city, phone_number } = req.body
-            await User.update_info(req.session.user.mail_user, address, city, phone_number)
 
-            req.flash('message', "Your account modification is saved")
-            res.redirect('/home')
+            const regex_phone_number = new RegExp(/^(0)[1-9](\d\d){4}$/);
+            if (!regex_phone_number.test(phone_number)) {
+                req.flash('error', "Please enter a valid phone number")
+                res.redirect('/my_account')
+            } else {
+                await User.update_info(req.session.user.mail_user, address, city, phone_number)
+
+                req.flash('message', "Your account modification is saved")
+                res.redirect('/home')
+            }
         } else {
             const data = req.body['delete'].split(',')
             const information = `Delete by client at ${moment()}`
@@ -383,59 +388,6 @@ app.get('/administration', async (req, res) => {
         res.redirect('/login_admin')
     }
 })
-
-// Permet de se deconnecter ou de modifier les infos de l'administrateur
-/*app.post('/administration', async (req, res) => {
-    if (verif_authentification_admin(req.session)) {
-        if (req.body.hasOwnProperty("log_out")) {
-            req.session.destroy((err) => {
-            })
-            res.redirect('/login_admin')
-        } else if (req.body.hasOwnProperty("add")) {
-
-            const { name, address, city, mail, phone_number } = req.body
-
-            await Hospital.create(name, address, city, mail, phone_number)
-
-            req.flash('message', "The hospital is correctly added")
-            res.redirect('/administration')
-
-        } else if (req.body.hasOwnProperty("delete")) {
-
-            const { name, address } = req.body
-
-            await Hospital.delete(name, address)
-
-            req.flash('message', "The hospital is correctly deleted")
-            res.redirect('/administration')
-
-        } else if (req.body.hasOwnProperty("accept_appointment")){
-
-            const data = req.body['accept_appointment'].split(',')
-            const information = `Accepted by Admin at ${moment()}`
-            const date = moment(new Date(data[2])).format("YYYY-MM-DD")
-
-            await Appointment.update_type('accepted', information, data[0], data[1], date)
-
-            req.flash('message', "The appointment is correctly accepted")
-            res.redirect('/administration')
-
-        } else if (req.body.hasOwnProperty("delete_appointment")){
-
-            const data = req.body['delete_appointment'].split(',')
-            const information = `Canceled by Admin at ${moment()}`
-            const date = moment(new Date(data[2])).format("YYYY-MM-DD")
-
-            await Appointment.update_type('canceled', information, data[0], data[1], date)
-
-            req.flash('message', "The appointment is correctly canceled")
-            res.redirect('/administration')
-        }
-
-    } else {
-        res.redirect('/login_admin')
-    }
-})*/
 
 // Route vers la page Donator
 app.get('/donator', async (req, res) => {
