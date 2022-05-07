@@ -174,7 +174,7 @@ app.post('/login', async (req, res) => {
 
 // Route vers la page Login Admin
 app.get('/login_admin', (req, res) => {
-    res.render('pages/login', {admin : false, error : false})
+    res.render('pages/login', {admin : true, error : false})
 })
 
 // Vérifie si l'administrateur est dans la base de donnée et si le mot de base est correct si c'est le cas créer une session
@@ -193,7 +193,7 @@ app.post('/login_admin', async (req, res) => {
         res.redirect('/administration')
     } else {
         req.session.destroy((err) => { })
-        res.render('pages/login', {admin : false, error : true})
+        res.render('pages/login', {admin : true, error : true})
     }
 })
 
@@ -205,7 +205,6 @@ app.get('/create_partner', async (req, res) => {
     } else {
         res.redirect('/login_admin')
     }
-
 })
 
 // Permet de créer un partner
