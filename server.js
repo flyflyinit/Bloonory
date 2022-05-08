@@ -61,7 +61,12 @@ app.get('/', (req, res) => {
 
 // Route vers la page Homepage
 app.get('/home', (req, res) => {
-    res.render('pages/index', {connected : verif_authentification(req.session)})
+    let connectected = true;
+    if (req.session.user === undefined || Object.entries(req.session.user).length === 0) {
+        connectected = false
+    }
+
+    res.render('pages/index', {connected : connectected })
 })
 
 // Method post pour la redirection des boutons donator et beneficiary
