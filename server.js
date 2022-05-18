@@ -118,13 +118,20 @@ app.get('/comments', async (req, res) => {
     const data = await Comments.find_all_and_info_user()
     const connexion = req.session.user !== undefined
 
-    res.render('pages/comments', {comments: data, connexion: connexion})
+    res.render('pages/comments', {comments: data, connexion: connexion, session_user: req.session.user})
 })
 
 // Permet d'inscrire le commentaire de l'utilisateur connecté dans la base de donnée
 app.post('/comments', async (req, res) => {
-    const { comment } = req.body
-    await Comments.create(comment, req.session.user.mail_user)
+    if (req.body.hasOwnProperty("create")) {
+        const comment = req.body['comment']
+        await Comments.create(comment, req.session.user.mail_user)
+    }
+
+    else if (req.body.hasOwnProperty("delete")){
+        const id = req.body['delete']
+        await Comments.delete(id)
+    }
 
     res.redirect('/comments')
 })
