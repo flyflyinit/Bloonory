@@ -12,12 +12,12 @@
         <div class="row g-3">
             <div class="col-12">
                 <label for="address" class="form-label">Address</label>
-                <input name="address" type="text" class="form-control" id="address" value="<%= user.address %>" required="">
+                <input name="address" type="text" class="form-control" id="address" value="<%= user.address %>" required="" maxlength="255">
             </div>
 
             <div class="col-12">
                 <label for="city" class="form-label">City</label>
-                <input name="city" type="text" class="form-control" id="city" value="<%= user.city %>" required="">
+                <input name="city" type="text" class="form-control" id="city" value="<%= user.city %>" required="" maxlength="255">
             </div>
 
             <div class="col-12">
@@ -26,7 +26,7 @@
                 <% } else { %>
                     <label for="phone_number" class="form-label">Phone number</label>
                 <% } %>
-                <input name="phone_number" type="text" class="form-control" id="phone_number" value="<%= user.phone_number %>" required="">
+                <input name="phone_number" type="text" class="form-control" id="phone_number" value="<%= user.phone_number %>" required="" maxlength="10">
             </div>
 
             <div class="col-sm-6">

@@ -9,7 +9,7 @@
         <div class="row g-3">
             <div class="col-sm-6">
                 <label for="firstName" class="form-label">First name</label>
-                <input name="firstName" type="text" class="form-control" id="firstName" placeholder="" value="<%= firstName %>" required="">
+                <input name="firstName" type="text" class="form-control" id="firstName" placeholder="" value="<%= firstName %>" required="" maxlength="50">
                 <div class="invalid-feedback">
                     Valid first name is required.
                 </div>
@@ -17,7 +17,7 @@
 
             <div class="col-sm-6">
                 <label for="lastName" class="form-label">Last name</label>
-                <input name="lastName" type="text" class="form-control" id="lastName" placeholder="" value="<%= lastName %>" required="">
+                <input name="lastName" type="text" class="form-control" id="lastName" placeholder="" value="<%= lastName %>" required="" maxlength="50">
                 <div class="invalid-feedback">
                     Valid last name is required.
                 </div>
@@ -25,7 +25,7 @@
 
             <div class="col-12">
                 <label for="email" class="form-label">Email</label>
-                <input name="email" type="email" class="form-control" id="email" placeholder="you@example.com" value="<%= email %>" required="">
+                <input name="email" type="email" class="form-control" id="email" placeholder="you@example.com" value="<%= email %>" required="" maxlength="100">
                 <div class="invalid-feedback">
                     Please enter a valid email address.
                 </div>
@@ -33,7 +33,7 @@
 
             <div class="col-12">
                 <label for="password" class="form-label">Password</label>
-                <input name="password" type="password" class="form-control" id="password" placeholder="" value="<%= password %>" required="">
+                <input name="password" type="password" class="form-control" id="password" placeholder="" value="<%= password %>" required="" maxlength="255">
                 <div class="invalid-feedback">
                     Please enter a valid password.
                 </div>
@@ -45,7 +45,7 @@
                 <% } else {%>
                     <label for="conf_password" class="form-label">Confirm Password</label>
                 <% } %>
-                <input name="conf_password" type="password" class="form-control" id="conf_password" placeholder="" required="">
+                <input name="conf_password" type="password" class="form-control" id="conf_password" placeholder="" required="" maxlength="255">
                 <div class="invalid-feedback">
                     Please enter the same password.
                 </div>
@@ -53,7 +53,7 @@
 
             <div class="col-12">
                 <label for="address" class="form-label">Address</label>
-                <input name="address" type="text" class="form-control" id="address" placeholder="1234 Main St" value="<%= address %>" required="">
+                <input name="address" type="text" class="form-control" id="address" placeholder="1234 Main St" value="<%= address %>" required="" maxlength="255">
                 <div class="invalid-feedback">
                     Please enter your address.
                 </div>
@@ -61,7 +61,7 @@
 
             <div class="col-12">
                 <label for="city" class="form-label">City</label>
-                <input name="city" type="text" class="form-control" id="city" placeholder="Versailles" value="<%= city %>" required="">
+                <input name="city" type="text" class="form-control" id="city" placeholder="Versailles" value="<%= city %>" required="" maxlength="255">
                 <div class="invalid-feedback">
                     Please enter your city.
                 </div>
@@ -69,7 +69,7 @@
 
             <div class="col-12">
                 <label for="phone_number" class="form-label">Phone number</label>
-                <input name="phone_number" type="text" class="form-control" id="phone_number" placeholder="0612345678" value="<%= phone_number %>" required="">
+                <input name="phone_number" type="text" class="form-control" id="phone_number" placeholder="0612345678" value="<%= phone_number %>" required="" maxlength="10">
                 <div class="invalid-feedback">
                     Please enter your phone number.
                 </div>

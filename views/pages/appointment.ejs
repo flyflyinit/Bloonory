@@ -14,14 +14,14 @@
             <h2 class="fs-4 fw-bold">Select a date:</h2>
         <% } %>
         <div class="input-group mb-3">
-            <input name="date" type="text" id="datepicker" class="form-control datepicker" placeholder="Pick a date: MM/DD/YYYY" autocomplete="off" required="">
+            <input name="date" type="text" id="datepicker" class="form-control datepicker" placeholder="Pick a date: MM/DD/YYYY" autocomplete="off" required="" maxlength="10">
         </div>
 
         <h2 class="fs-4 fw-bold">Destination:</h2>
         <!--The div element for the map -->
         <div id="floating-panel">
             <h3 class="fs-6 fw-bold">Start:</h3>
-            <input name="start" type="text" class="form-control" id="start" placeholder="your localisation" value="<%= address %>" required="">
+            <input name="start" type="text" class="form-control" id="start" placeholder="your localisation" value="<%= address %>" required="" maxlength="100">
             <br>
             <% if (locals.flash && locals.flash.error) { %>
                 <h3 class="fs-6 fw-bold error">End: <%= flash.error %></h3>
