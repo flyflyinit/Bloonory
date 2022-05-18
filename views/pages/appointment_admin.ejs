@@ -13,7 +13,9 @@
             <% for (appointment of appointments) { %>
                 <div class="card">
                     <div class="card-header">
-                        <%= appointment.type_appointment %>
+                        <%= appointment.type_appointment %> :
+                        <%= appointment.first_name %>
+                        <%= appointment.last_name %>
                     </div>
                     <div class="card-body">
                         <h5 class="card-title"><%= appointment.name %>: <%= appointment.address %>, <%= appointment.city %></h5>

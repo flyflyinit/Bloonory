@@ -11,6 +11,14 @@ class Appointment_relation_hospital {
         return this.row.mail_consumer
     }
 
+    get last_name() {
+        return this.row.last_name
+    }
+
+    get first_name() {
+        return this.row.first_name
+    }
+
     get hospital_id() {
         return this.row.hospital_id
     }
@@ -64,7 +72,7 @@ class Appointment_relation_hospital {
     }
 
     static find_all_incoming(status) {
-        const sql = 'SELECT * FROM appointment a, hospital h WHERE a.status = $1 AND a.hospital_id = h.hospital_id'
+        const sql = 'SELECT a.*, h.*, c.first_name, c.last_name FROM appointment a, hospital h, consumer c WHERE a.status = $1 AND a.hospital_id = h.hospital_id AND a.mail_consumer = c.mail_consumer'
 
         return client.query(sql, [status])
             .then(result => result.rows.map(res => new Appointment_relation_hospital(res)))
