@@ -39,7 +39,7 @@ class Comments {
     }
 
     static find_all_and_info_user() {
-        const sql = 'SELECT u.last_name, u.first_name, c.text_comment, c.date_publication FROM comment c, consumer u WHERE c.mail_consumer = u.mail_consumer ORDER BY c.date_publication DESC'
+        const sql = 'SELECT u.last_name, u.first_name, c.text_comment, c.date_publication, c.mail_consumer, c.comment_id  FROM comment c, consumer u WHERE c.mail_consumer = u.mail_consumer ORDER BY c.date_publication DESC'
 
         return client.query(sql, [])
             .then(result => result.rows.map(res => new Comments(res)))
@@ -51,6 +51,14 @@ class Comments {
 
         return client.query(sql, [])
             .then(result => result.rows.map(res => new Comments(res)))
+            .catch()
+    }
+
+    static delete(id) {
+        const sql = 'DELETE FROM comment WHERE comment_id = $1'
+
+        return client.query(sql, [id])
+            .then()
             .catch()
     }
 }
