@@ -85,34 +85,6 @@ app.post('/home',  (req, res) => {
     }
 })
 
-// Dashboard
-app.get('/dashboard', async (req, res) => {
-    const cors = require('cors');
-    const bodyParser = require('body-parser');
-    const path = require('path');
-    const dashboardRoutes = require('./routes/dashboard-Routes');
-
-    const Comments = require('./models/comments')
-    const data = await Comments.find_all_and_info_user()
-
-    let connexion = false
-    
-    if (req.session.user !== undefined) {
-        connexion = true
-    }
-
-    res.render('pages/dashboard', {comments: data, connexion: connexion})
-})
-
-app.post('/dashboard', async (req, res) => {
-    //const { comment } = req.body
-    //const Comments = require('./models/comments')
-
-    //const data = await Comments.create(comment, req.session.user.mail_user)
-
-    res.redirect('/dashboard')
-})
-
 // Route vers la page Comments
 app.get('/comments', async (req, res) => {
     const data = await Comments.find_all_and_info_user()
