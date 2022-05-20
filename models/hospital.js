@@ -60,10 +60,10 @@ class Hospital {
             .then(result => result.rows.map(res => new Hospital(res)))
             .catch()
     }
-    static delete(name, address) {
-        const sql = 'DELETE FROM hospital WHERE name = $1 AND address = $2'
+    static delete(id) {
+        const sql = 'DELETE FROM hospital WHERE hospital_id = $1'
 
-        return client.query(sql, [name, address])
+        return client.query(sql, [id])
             .then()
             .catch()
     }

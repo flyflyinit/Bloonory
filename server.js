@@ -212,8 +212,7 @@ app.post('/login_admin', async (req, res) => {
 // Route vers la page Create a partner
 app.get('/create_partner', async (req, res) => {
     if (verif_authentification_admin(req.session)) {
-        const appointments = await AppointmentRHospital.find_all_incoming("incoming")
-        res.render('pages/create_partner', {appointments: appointments})
+        res.render('pages/create_partner')
     } else {
         res.redirect('/login_admin')
     }
@@ -236,8 +235,8 @@ app.post('/create_partner', async (req, res) => {
 // Route vers la page Delete a partner
 app.get('/delete_partner', async (req, res) => {
     if (verif_authentification_admin(req.session)) {
-        const appointments = await AppointmentRHospital.find_all_incoming("incoming")
-        res.render('pages/delete_partner', {appointments: appointments})
+        const hospitals = await Hospital.find_all()
+        res.render('pages/delete_partner', {hospitals: hospitals})
 
     } else {
         res.redirect('/login_admin')
@@ -247,9 +246,9 @@ app.get('/delete_partner', async (req, res) => {
 // Permet de supprimer un partner
 app.post('/delete_partner', async (req, res) => {
     if (verif_authentification_admin(req.session)){
-        const {name, address} = req.body
+        const hospital_id = req.body['partners']
 
-        await Hospital.delete(name, address)
+        await Hospital.delete(hospital_id)
 
         req.flash('message', "The hospital is correctly deleted")
         res.redirect('/delete_partner')
@@ -271,7 +270,6 @@ app.get('/log_out', (req, res) => {
 // Route vers la page Appointment admin
 app.get('/appointment_admin', async (req, res) => {
     if (verif_authentification_admin(req.session)) {
-        const admin = await Admin.find_byMail(req.session.admin.mail_admin)
         const appointments = await AppointmentRHospital.find_all_incoming( "incoming")
 
         res.render('pages/appointment_admin', {appointments: appointments})
