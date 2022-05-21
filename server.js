@@ -219,10 +219,16 @@ app.get('/delete_partner', async (req, res) => {
 app.post('/delete_partner', async (req, res) => {
     if (verif_authentification_admin(req.session)){
         const hospital_id = req.body['partners']
+        const error_value = -1;
 
-        await Hospital.delete(hospital_id)
+        if (hospital_id === error_value.toString()) {
+            req.flash('error', "Please select an hospital")
+        }
 
-        req.flash('message', "The hospital is correctly deleted")
+        else {
+            await Hospital.delete(hospital_id)
+            req.flash('message', "The hospital is correctly deleted")
+        }
         res.redirect('/delete_partner')
     } else {
         res.redirect('/login_admin')
