@@ -439,8 +439,8 @@ app.post('/donator', async (req, res) => {
 app.get('/beneficiary', async (req, res) => {
     if (verif_authentification(req.session)) {
         const hospitals = await Hospital.find_all()
-
         const user = await User.find(req.session.user.mail_user)
+        const address = `${user.address}, ${user.city}`
 
         const appointments = await Appointment.find_byUser_isIncoming(req.session.user.mail_user)
         const all_date = []
@@ -449,7 +449,7 @@ app.get('/beneficiary', async (req, res) => {
             all_date.push(moment(new Date(appointments[appointment].date_appointment + 24*60*60*1000)).format("YYYY-MM-DD"))
         }
 
-        res.render('pages/appointment', {title: "Beneficiary", address: user.address, hospitals: hospitals, connected: true, date: all_date})
+        res.render('pages/appointment', {title: "Beneficiary", address: address, hospitals: hospitals, connected: true, date: all_date})
     } else {
         res.redirect('/login')
     }
